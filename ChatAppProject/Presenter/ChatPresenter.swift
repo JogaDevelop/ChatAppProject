@@ -2,16 +2,17 @@
 //  ChatPresenter.swift
 //  ChatAppProject
 //
+//  Created by Evgeny Kislitsin on 09.04.2024.
+//
 
 import UIKit
 
-//MARK: ChatPresenterProtocol
-protocol IChatPresenter: AnyObject {
+
+protocol ChatPresentationLogic: AnyObject {
 	
 }
 
-//MARK: ChatPresenter
-final class ChatPresenter: IChatPresenter {
+final class ChatPresenter: ChatPresentationLogic {
 	
 	//MARK: - Properties
 	

@@ -2,10 +2,12 @@
 //  ChatDetailMessageViewController.swift
 //  ChatAppProject
 //
+//  Created by Evgeny Kislitsin on 09.04.2024.
+//
 
 import UIKit
 
-//MARK: ChatDetailMessageViewController
+
 class ChatDetailMessageViewController: UIViewController {
 
     override func viewDidLoad() {
