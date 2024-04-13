@@ -17,9 +17,7 @@ final class ChatTableViewCell: UITableViewCell  {
 	private lazy var avatarImageView: UIImageView = makeImageView()
 	private lazy var messageView: ChatBubbleView = makeMessageView()
 	private lazy var dateLabel: UILabel = makeTimeLabel()
-	
-	private var incoiming = false
-	
+
 	override func didMoveToSuperview() {
 		super.didMoveToSuperview()
 	}
@@ -29,15 +27,17 @@ final class ChatTableViewCell: UITableViewCell  {
 	}
 	
 	private func setupConfigureCell(model: MessageViewModel) {
+		messageView.incoming = model.isIncoming
+		messageView.messageLabel.text = model.message
+		dateLabel.text = model.date
 		contentView.addSubview(avatarImageView)
 		contentView.addSubview(dateLabel)
 		contentView.addSubview(messageView)
-
-		incoiming = model.isIncoming
-		messageView.messageLabel.text = model.message
-		dateLabel.text = model.date
 		
-		avatarImageView.image = UIImage(named: "arrow.up.circle.fill")
+		
+		
+		
+		avatarImageView.image = UIImage(named: "arrow.up.circle.fill") // картинка на время не забыть поменять
 		avatarImageView.translatesAutoresizingMaskIntoConstraints = false
 		avatarImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5).isActive = true
 		avatarImageView.heightAnchor.constraint(equalToConstant: 30).isActive = true
@@ -55,22 +55,19 @@ final class ChatTableViewCell: UITableViewCell  {
 		dateLabel.widthAnchor.constraint(equalToConstant: 70).isActive = true
 		dateLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
 		
-		switch incoiming {
+		switch model.isIncoming {
 		case true:
 			avatarImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10).isActive = true
 			messageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 45).isActive = true
-			messageView.backgroundColor = .gray
-			
 		case false:
 			avatarImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
 			messageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -45).isActive = true
-			messageView.backgroundColor = .green
 		}
 	}
 }
 
 extension ChatTableViewCell: CellConfigurable {
-
+	
 	
 	typealias ModelCell = ChatTableViewCellModel
 	
@@ -81,7 +78,7 @@ extension ChatTableViewCell: CellConfigurable {
 	func configure(with model: ModelCell) {
 		setupConfigureCell(model: model.message)
 	}
-
+	
 }
 
 

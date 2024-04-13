@@ -21,6 +21,8 @@
 		36E7086B2BC71E83007BA716 /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E7086A2BC71E83007BA716 /* Api.swift */; };
 		36E7086E2BC82F68007BA716 /* ChatBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E7086D2BC82F68007BA716 /* ChatBubbleView.swift */; };
 		36E708702BC87DB8007BA716 /* MessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E7086F2BC87DB8007BA716 /* MessageViewModel.swift */; };
+		36E7E7AB2BC9FE9B0043BC71 /* InputFieldMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E7E7AA2BC9FE9B0043BC71 /* InputFieldMessage.swift */; };
+		36E7E7AD2BCA25790043BC71 /* ChatViewController + UITextFeieldDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E7E7AC2BCA25790043BC71 /* ChatViewController + UITextFeieldDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +42,8 @@
 		36E7086A2BC71E83007BA716 /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
 		36E7086D2BC82F68007BA716 /* ChatBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatBubbleView.swift; sourceTree = "<group>"; };
 		36E7086F2BC87DB8007BA716 /* MessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewModel.swift; sourceTree = "<group>"; };
+		36E7E7AA2BC9FE9B0043BC71 /* InputFieldMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputFieldMessage.swift; sourceTree = "<group>"; };
+		36E7E7AC2BCA25790043BC71 /* ChatViewController + UITextFeieldDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController + UITextFeieldDelegate.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,6 +145,7 @@
 			isa = PBXGroup;
 			children = (
 				36E7086D2BC82F68007BA716 /* ChatBubbleView.swift */,
+				36E7E7AA2BC9FE9B0043BC71 /* InputFieldMessage.swift */,
 			);
 			path = CustomViews;
 			sourceTree = "<group>";
@@ -182,6 +187,7 @@
 		36E708612BC6C31C007BA716 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				36E7E7AC2BCA25790043BC71 /* ChatViewController + UITextFeieldDelegate.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -308,7 +314,9 @@
 				36E708362BC6AAD0007BA716 /* AppDelegate.swift in Sources */,
 				36E708382BC6AAD0007BA716 /* SceneDelegate.swift in Sources */,
 				36E708522BC6B597007BA716 /* ChatTableView.swift in Sources */,
+				36E7E7AD2BCA25790043BC71 /* ChatViewController + UITextFeieldDelegate.swift in Sources */,
 				36E708542BC6B5B2007BA716 /* ChatTableViewCell.swift in Sources */,
+				36E7E7AB2BC9FE9B0043BC71 /* InputFieldMessage.swift in Sources */,
 				36E7085B2BC6BC84007BA716 /* ChatDetailMessageViewController.swift in Sources */,
 				36E708502BC6B569007BA716 /* ChatViewController.swift in Sources */,
 				36E708562BC6B767007BA716 /* ChatPresenter.swift in Sources */,

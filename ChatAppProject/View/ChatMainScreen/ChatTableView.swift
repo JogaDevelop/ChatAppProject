@@ -16,25 +16,23 @@ final class ChatTableView: UITableView {
 		MessageViewModel(image: "", date: "25.02", id: "", message: "Helsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdlo", isIncoming: false),
 		MessageViewModel(image: "", date: "25.02", id: "", message: "Helwewlo", isIncoming: false),
 		MessageViewModel(image: "", date: "25.02", id: "", message: "Hellwsdso", isIncoming: true),
+		MessageViewModel(image: "", date: "25.02", id: "", message: "Hello", isIncoming: false),
+		MessageViewModel(image: "", date: "25.02", id: "", message: "Helsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdlo", isIncoming: false),
+		MessageViewModel(image: "", date: "25.02", id: "", message: "Helwewlo", isIncoming: false),
+		MessageViewModel(image: "", date: "25.02", id: "", message: "Hellwsdso", isIncoming: true),
 	]
 	
 	override func didMoveToSuperview() {
 		super.didMoveToSuperview()
-		registerTableViewCell()
-		setupDelegate()
+		configureTableVIew()
+		
 	}
 	
-	private func registerTableViewCell() {
+	private func configureTableVIew() {
 		register(ChatTableViewCell.self, forCellReuseIdentifier: "Cell")
-	}
-	
-	private func setupDelegate() {
+		self.separatorStyle = .none
 		delegate = self
 		dataSource = self
-	}
-	
-	private func serrings() {
-		self.separatorStyle = .none
 	}
 	
 }

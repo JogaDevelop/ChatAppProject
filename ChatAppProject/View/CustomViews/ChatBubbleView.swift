@@ -13,9 +13,11 @@ final class ChatBubbleView: UIView {
 	lazy var messageLabel: UILabel = {
 		let label = UILabel()
 		label.numberOfLines = 0
-		label.textColor = .black
 		return label
 	}()
+	
+	var incoming = false
+	
 		
 	override func didMoveToSuperview() {
 		super.didMoveToSuperview()
@@ -24,8 +26,10 @@ final class ChatBubbleView: UIView {
 	}
 	
 	private func setupConfigure() {
+		backgroundColor = incoming ? .systemGray4 : .systemBlue
 		layer.cornerRadius = 20
 		clipsToBounds = true
+		messageLabel.textColor = incoming ? .black : .white
 	}
 	
 	private func setupConstraint() {
@@ -35,11 +39,16 @@ final class ChatBubbleView: UIView {
 		messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20).isActive = true
 		messageLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20).isActive = true
 		messageLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -15).isActive = true
+		messageLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 100).isActive = true
 	}
+	
+	
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
 	}
+	
+	
 }
 
 
