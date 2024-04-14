@@ -62,6 +62,7 @@ class InputContainerView: UIView, UITextViewDelegate {
 		if let text = messageTextView.text, !text.isEmpty {
 			onSend?(text)  // Вызов коллбека с отправленным текстом
 			messageTextView.text = "" // Очистка текстового поля после отправки
+			
 		}
 	}
 	

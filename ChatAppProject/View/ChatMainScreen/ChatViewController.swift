@@ -9,7 +9,7 @@ import UIKit
 
 class ChatViewController: UIViewController {
 	
-	let mokMessages = [
+	var mokMessages = [
 		MessageViewModel(image: "", date: "25.02", id: "", message: "Hello", isIncoming: false),
 		MessageViewModel(image: "", date: "25.02", id: "", message: "Helsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdlo", isIncoming: false),
 		MessageViewModel(image: "", date: "25.02", id: "", message: "Helwewlo", isIncoming: false),
@@ -37,9 +37,12 @@ class ChatViewController: UIViewController {
 		setupConstraints()
 		registerForKeyboardNotifications()
 		
-		// на время
+		
+		
 		
 	}
+	
+	
 	
 	override func viewWillAppear(_ animated: Bool) {
 		setupInterface()
@@ -47,20 +50,46 @@ class ChatViewController: UIViewController {
 		
 	}
 	
-}
-
-
-extension ChatViewController: UITextViewDelegate {
-	
-	// Делегат UITextView для обработки изменений в текстовом поле
-	func textViewDidChange(_ textView: UITextView) {
-		
+	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
+		removeNotificationsForKeyboardAppearance()
 	}
 	
-	
 }
 
+
 extension ChatViewController {
+	// Инициализация коллбека onSend
+	func setupSendButtonCallback() {
+		inputContainerView.onSend = { [weak self] message in
+			// Здесь вы можете обработать отправленное сообщение
+			print("Отправленное сообщение: \(message)")
+			self?.handleSentMessage(message)
+			// Дополнительная логика обработки отправленного сообщения
+		}
+	}
+	
+	// Метод для обработки отправленного сообщения
+	func handleSentMessage(_ message: String) {
+		// Добавление сообщения в массив
+	
+		
+		// Обновление таблицы (если используется UITableView для отображения сообщений)
+		// tableView.reloadData()
+		
+		// Прокрутка таблицы к новому сообщению
+		// scrollToLastMessage()
+	}
+}
+
+
+extension ChatViewController {
+	
+	private func removeNotificationsForKeyboardAppearance() {
+		NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+		NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+	}
+	
 	private func registerForKeyboardNotifications() {
 		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -102,24 +131,27 @@ extension ChatViewController {
 		view.backgroundColor = .systemBackground
 	}
 	
-	@objc private func sendMessage() {}
-	
-	//	private func configureSendButton() {
-	//
-	//		buttonSendMessage.addTarget(self, action: #selector(sendButtonTapped), for: .touchUpInside)
-	//
-	//		NSLayoutConstraint.activate([
-	//			buttonSendMessage.topAnchor.constraint(equalTo: view.topAnchor, constant: 10),
-	//			buttonSendMessage.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-	//			buttonSendMessage.heightAnchor.constraint(equalToConstant: 40),
-	//			buttonSendMessage.widthAnchor.constraint(equalToConstant: 40)
-	//		])
-	//	}
-	//
-	//
-	//	@objc func sendButtonTapped() {
-	//		print("presed button")
-	//	}
+//	@objc private func sendMessage() {
+//		
+//		
+//	}
+//	
+//		private func configureSendButton() {
+//	
+//			buttonSendMessage.addTarget(self, action: #selector(sendButtonTapped), for: .touchUpInside)
+//	
+//			NSLayoutConstraint.activate([
+//				buttonSendMessage.topAnchor.constraint(equalTo: view.topAnchor, constant: 10),
+//				buttonSendMessage.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+//				buttonSendMessage.heightAnchor.constraint(equalToConstant: 40),
+//				buttonSendMessage.widthAnchor.constraint(equalToConstant: 40)
+//			])
+//		}
+//	
+//	
+//		@objc func sendButtonTapped() {
+//			print("presed button")
+//		}
 }
 
 /// Методы для инициализации и настройки UI, lazy свойств наших Views.
