@@ -12,12 +12,7 @@ extension ChatViewController: UITextFieldDelegate {
 		view.endEditing(true)
 		return true
 	}
-
-//	func hideKeyboard() {
-//		hideKeyboard()
-//		return true
-//	}
-//	
+	
 	func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
 		return true
 	}

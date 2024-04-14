@@ -9,21 +9,26 @@ import UIKit
 
 class ChatViewController: UIViewController {
 	
+	let mokMessages = [
+		MessageViewModel(image: "", date: "25.02", id: "", message: "Hello", isIncoming: false),
+		MessageViewModel(image: "", date: "25.02", id: "", message: "Helsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdlo", isIncoming: false),
+		MessageViewModel(image: "", date: "25.02", id: "", message: "Helwewlo", isIncoming: false),
+		MessageViewModel(image: "", date: "25.02", id: "", message: "Hellwsdso", isIncoming: true),
+		MessageViewModel(image: "", date: "25.02", id: "", message: "Hello", isIncoming: false),
+		MessageViewModel(image: "", date: "25.02", id: "", message: "Helsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdlo", isIncoming: false),
+		MessageViewModel(image: "", date: "25.02", id: "", message: "Helwewlo", isIncoming: false),
+		MessageViewModel(image: "", date: "25.02", id: "", message: "Hellwsdso", isIncoming: true),
+	]
 	
 	// MARK - Presenter
 	
-
 	var presenter: ChatPresentationLogic?
 	
 	// MARK - Views
-	
-	private lazy var titleChatScreen: UILabel = makeTitleScreen()
+
+	private lazy var headerLabel: UILabel = makeTitleScreen()
 	private lazy var chatTableView: UITableView = makeTableView()
-	private lazy var messageContainerView: UIView = makeContainerView()
-	private lazy var messageTextField: UITextField = makeMessageView()
-	private lazy var buttonSendMessage: UIButton = makeSendButton()
-	
-	
+	private lazy var inputContainerView: InputContainerView = makeInputContainer()
 	
 	// MARK: - Lifecycle
 	
@@ -32,46 +37,30 @@ class ChatViewController: UIViewController {
 		setupConstraints()
 		registerForKeyboardNotifications()
 		
-		
+		// на время
 		
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
 		setupInterface()
+		// Прокручиваем таблицу к последнему сообщению
+		
 	}
+	
+}
+
+
+extension ChatViewController: UITextViewDelegate {
+	
+	// Делегат UITextView для обработки изменений в текстовом поле
+	func textViewDidChange(_ textView: UITextView) {
+		
+	}
+	
+	
 }
 
 extension ChatViewController {
-	private func setupInterface() {
-		navigationController?.navigationBar.isHidden = true
-		view.backgroundColor = .systemBackground
-	}
-	
-	@objc private func sendMessage() {}
-}
-
-extension ChatViewController {
-	
-
-	
-//	private func configureSendButton() {
-//		
-//		buttonSendMessage.addTarget(self, action: #selector(sendButtonTapped), for: .touchUpInside)
-//		
-//		NSLayoutConstraint.activate([
-//			buttonSendMessage.topAnchor.constraint(equalTo: view.topAnchor, constant: 10),
-//			buttonSendMessage.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-//			buttonSendMessage.heightAnchor.constraint(equalToConstant: 40),
-//			buttonSendMessage.widthAnchor.constraint(equalToConstant: 40)
-//		])
-//	}
-//	
-//	
-//	@objc func sendButtonTapped() {
-//		print("presed button")
-//	}
-	
-	
 	private func registerForKeyboardNotifications() {
 		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -83,56 +72,58 @@ extension ChatViewController {
 		let keyboardScreenEndFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
 		
 		if notification.name == UIResponder.keyboardWillHideNotification {
-			if self.view.frame.origin.y != 0 {
-				self.view.frame.origin.y = 0
-			}
-		} else {
-			if self.view.frame.origin.y == 0 {
-				self.view.frame.origin.y -= keyboardScreenEndFrame.height
-			}
+			chatTableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+		} else if chatTableView.contentInset.bottom == 0 {
+			print("One")
+			// Увеличение bottom inset на высоту клавиатуры
+			print("Before contentInset: \(chatTableView.contentInset)")
+			print("Before contentOffset: \(chatTableView.contentOffset)")
+			chatTableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardScreenEndFrame.height + 200, right: 0)
+			// Установка contentOffset для смещения контента таблицы вверх
+			chatTableView.setContentOffset(CGPoint(x: 0, y: -keyboardScreenEndFrame.height), animated: true)
+			print("After contentInset: \(chatTableView.contentInset)")
+			print("After contentOffset: \(chatTableView.contentOffset)")
+			
+			
 		}
 		
 		view.needsUpdateConstraints()
-		
 		UIView.animate(withDuration: animationDuration) {
 			self.view.layoutIfNeeded()
 		}
 	}
+	
 }
 
 
+extension ChatViewController {
+	private func setupInterface() {
+		navigationController?.navigationBar.isHidden = true
+		view.backgroundColor = .systemBackground
+	}
+	
+	@objc private func sendMessage() {}
+	
+	//	private func configureSendButton() {
+	//
+	//		buttonSendMessage.addTarget(self, action: #selector(sendButtonTapped), for: .touchUpInside)
+	//
+	//		NSLayoutConstraint.activate([
+	//			buttonSendMessage.topAnchor.constraint(equalTo: view.topAnchor, constant: 10),
+	//			buttonSendMessage.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+	//			buttonSendMessage.heightAnchor.constraint(equalToConstant: 40),
+	//			buttonSendMessage.widthAnchor.constraint(equalToConstant: 40)
+	//		])
+	//	}
+	//
+	//
+	//	@objc func sendButtonTapped() {
+	//		print("presed button")
+	//	}
+}
+
 /// Методы для инициализации и настройки UI, lazy свойств наших Views.
 extension ChatViewController {
-	private func makeTableView() -> ChatTableView {
-		let tableView = ChatTableView()
-		return tableView
-	}
-	
-	private func makeContainerView() -> UIView {
-		let view = UIView()
-		view.backgroundColor = .secondarySystemBackground
-		return view
-	}
-	
-	private func makeMessageView() -> UITextField {
-		let textView = UITextField()
-		textView.backgroundColor = .systemBackground
-		textView.layer.cornerRadius = 8
-		textView.layer.borderColor = UIColor.placeholderText.cgColor
-		textView.layer.borderWidth = 0.5
-		textView.font = .systemFont(ofSize: 16, weight: .regular)
-		return textView
-	}
-	
-	private func makeSendButton() -> UIButton {
-		let button = UIButton()
-		let configuration = UIImage.SymbolConfiguration(pointSize: 24)
-		button.setImage(UIImage(systemName: "arrow.up.circle.fill", withConfiguration: configuration), for: .normal)
-		button.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
-		button.tintColor = .blue
-		return button
-	}
-	
 	private func makeTitleScreen() -> UILabel {
 		let label = UILabel()
 		label.text = "Тестовое задание"
@@ -140,45 +131,50 @@ extension ChatViewController {
 		return label
 	}
 	
-	private func setupConstraints() {
-		view.addSubview(titleChatScreen)
-		view.addSubview(chatTableView)
-		view.addSubview(messageContainerView)
-		messageContainerView.addSubview(messageTextField)
-		messageContainerView.addSubview(buttonSendMessage)
-		
+	private func makeSrollView() -> UIScrollView {
+		let scrollView = UIScrollView()
+		return scrollView
+	}
 	
+	private func makeTableView() -> ChatTableView {
+		let tableView = ChatTableView()
+		return tableView
+	}
+	
+	private func makeInputContainer() -> InputContainerView {
+		let view = InputContainerView()
+		view.backgroundColor = .secondarySystemBackground
+		return view
+	}
+	
+	private func setupConstraints() {
+
+		view.addSubview(headerLabel)
+		view.addSubview(chatTableView)
+		view.addSubview(inputContainerView)
 		
+		headerLabel.translatesAutoresizingMaskIntoConstraints = false
+		headerLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16).isActive = true
+		headerLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16).isActive = true
+		headerLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16).isActive = true
+		headerLabel.heightAnchor.constraint(equalToConstant: 100).isActive = true
 		
-		
-		titleChatScreen.translatesAutoresizingMaskIntoConstraints = false
-		titleChatScreen.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16).isActive = true
-		titleChatScreen.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16).isActive = true
+//		scrollView.translatesAutoresizingMaskIntoConstraints = false
+//		scrollView.topAnchor.constraint(equalTo: headerLabel.bottomAnchor).isActive = true
+//		scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16).isActive = true
+//		scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16).isActive = true
+//		scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16).isActive = true
 		
 		chatTableView.translatesAutoresizingMaskIntoConstraints = false
-		chatTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
-		chatTableView.topAnchor.constraint(equalTo: titleChatScreen.bottomAnchor, constant: 8).isActive = true
-		chatTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
-		chatTableView.bottomAnchor.constraint(equalTo: messageTextField.topAnchor, constant: -20).isActive = true
-		// не забыть поменять нижний kонстаринт на 20
-		
-		
-		messageContainerView.translatesAutoresizingMaskIntoConstraints = false
-		messageContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
-		messageContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
-		messageContainerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
-	
-		
-		messageTextField.translatesAutoresizingMaskIntoConstraints = false
-		messageTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16).isActive = true
-		messageTextField.topAnchor.constraint(equalTo: messageContainerView.topAnchor, constant: 8).isActive = true
-		messageTextField.trailingAnchor.constraint(equalTo: buttonSendMessage.leadingAnchor, constant: -8).isActive = true
-		messageTextField.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16).isActive = true
+		chatTableView.topAnchor.constraint(equalTo: headerLabel.bottomAnchor).isActive = true
+		chatTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+		chatTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+		chatTableView.bottomAnchor.constraint(equalTo: inputContainerView.topAnchor).isActive = true
 
-		buttonSendMessage.translatesAutoresizingMaskIntoConstraints = false
-		buttonSendMessage.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16).isActive = true
-		buttonSendMessage.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20).isActive = true
-		buttonSendMessage.heightAnchor.constraint(equalToConstant: 30).isActive = true
-		buttonSendMessage.widthAnchor.constraint(equalToConstant: 30).isActive = true
+		
+		inputContainerView.translatesAutoresizingMaskIntoConstraints = false
+		inputContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+		inputContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+		inputContainerView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -16).isActive = true
 	}
 }

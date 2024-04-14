@@ -16,7 +16,7 @@ final class ChatTableViewCell: UITableViewCell  {
 	
 	private lazy var avatarImageView: UIImageView = makeImageView()
 	private lazy var messageView: ChatBubbleView = makeMessageView()
-	private lazy var dateLabel: UILabel = makeTimeLabel()
+	private lazy var dateLabel: UILabel = makeDateLabel()
 
 	override func didMoveToSuperview() {
 		super.didMoveToSuperview()
@@ -98,7 +98,7 @@ extension ChatTableViewCell {
 		return view
 	}
 	
-	private func makeTimeLabel() -> UILabel {
+	private func makeDateLabel() -> UILabel {
 		let label = UILabel()
 		label.font = .systemFont(ofSize: 12, weight: .medium)
 		label.numberOfLines = 1

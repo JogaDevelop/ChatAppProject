@@ -23,6 +23,7 @@ final class ChatBubbleView: UIView {
 		super.didMoveToSuperview()
 		setupConstraint()
 		setupConfigure()
+		
 	}
 	
 	private func setupConfigure() {
