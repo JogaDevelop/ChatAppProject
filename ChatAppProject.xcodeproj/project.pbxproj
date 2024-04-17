@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3600AECB2BCB84EC0076E2FB /* InputContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3600AECA2BCB84EB0076E2FB /* InputContainerView.swift */; };
+		3600AECD2BCCAE2F0076E2FB /* ChatTableView + ChatFeatures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3600AECC2BCCAE2F0076E2FB /* ChatTableView + ChatFeatures.swift */; };
 		36E708362BC6AAD0007BA716 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E708352BC6AAD0007BA716 /* AppDelegate.swift */; };
 		36E708382BC6AAD0007BA716 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E708372BC6AAD0007BA716 /* SceneDelegate.swift */; };
 		36E708402BC6AAD0007BA716 /* Messages.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 36E7083E2BC6AAD0007BA716 /* Messages.xcdatamodeld */; };
@@ -23,11 +24,12 @@
 		36E7086E2BC82F68007BA716 /* ChatBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E7086D2BC82F68007BA716 /* ChatBubbleView.swift */; };
 		36E708702BC87DB8007BA716 /* MessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E7086F2BC87DB8007BA716 /* MessageViewModel.swift */; };
 		36E7E7AB2BC9FE9B0043BC71 /* InputFieldMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E7E7AA2BC9FE9B0043BC71 /* InputFieldMessage.swift */; };
-		36E7E7AD2BCA25790043BC71 /* ChatViewController + UITextFeieldDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E7E7AC2BCA25790043BC71 /* ChatViewController + UITextFeieldDelegate.swift */; };
+		36E7E7AD2BCA25790043BC71 /* ChatViewController + +ChatFeatures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E7E7AC2BCA25790043BC71 /* ChatViewController + +ChatFeatures.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		3600AECA2BCB84EB0076E2FB /* InputContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputContainerView.swift; sourceTree = "<group>"; };
+		3600AECC2BCCAE2F0076E2FB /* ChatTableView + ChatFeatures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatTableView + ChatFeatures.swift"; sourceTree = "<group>"; };
 		36E708322BC6AAD0007BA716 /* ChatAppProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatAppProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		36E708352BC6AAD0007BA716 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		36E708372BC6AAD0007BA716 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -45,7 +47,7 @@
 		36E7086D2BC82F68007BA716 /* ChatBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatBubbleView.swift; sourceTree = "<group>"; };
 		36E7086F2BC87DB8007BA716 /* MessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewModel.swift; sourceTree = "<group>"; };
 		36E7E7AA2BC9FE9B0043BC71 /* InputFieldMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputFieldMessage.swift; sourceTree = "<group>"; };
-		36E7E7AC2BCA25790043BC71 /* ChatViewController + UITextFeieldDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController + UITextFeieldDelegate.swift"; sourceTree = "<group>"; };
+		36E7E7AC2BCA25790043BC71 /* ChatViewController + +ChatFeatures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController + +ChatFeatures.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -190,7 +192,8 @@
 		36E708612BC6C31C007BA716 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				36E7E7AC2BCA25790043BC71 /* ChatViewController + UITextFeieldDelegate.swift */,
+				36E7E7AC2BCA25790043BC71 /* ChatViewController + +ChatFeatures.swift */,
+				3600AECC2BCCAE2F0076E2FB /* ChatTableView + ChatFeatures.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -316,8 +319,9 @@
 			files = (
 				36E708362BC6AAD0007BA716 /* AppDelegate.swift in Sources */,
 				36E708382BC6AAD0007BA716 /* SceneDelegate.swift in Sources */,
+				3600AECD2BCCAE2F0076E2FB /* ChatTableView + ChatFeatures.swift in Sources */,
 				36E708522BC6B597007BA716 /* ChatTableView.swift in Sources */,
-				36E7E7AD2BCA25790043BC71 /* ChatViewController + UITextFeieldDelegate.swift in Sources */,
+				36E7E7AD2BCA25790043BC71 /* ChatViewController + +ChatFeatures.swift in Sources */,
 				3600AECB2BCB84EC0076E2FB /* InputContainerView.swift in Sources */,
 				36E708542BC6B5B2007BA716 /* ChatTableViewCell.swift in Sources */,
 				36E7E7AB2BC9FE9B0043BC71 /* InputFieldMessage.swift in Sources */,

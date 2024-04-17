@@ -22,8 +22,13 @@ final class ChatTableViewCell: UITableViewCell  {
 		super.didMoveToSuperview()
 	}
 	
+	var messageViewLeadingOrTrailingConstraint = NSLayoutConstraint()
+	var avatarImageViewLeadingOrTrailingConstraint = NSLayoutConstraint()
+		
 	override func prepareForReuse() {
 		super.prepareForReuse()
+	
+		
 	}
 	
 	private func setupConfigureCell(model: MessageViewModel) {
@@ -33,9 +38,33 @@ final class ChatTableViewCell: UITableViewCell  {
 		contentView.addSubview(avatarImageView)
 		contentView.addSubview(dateLabel)
 		contentView.addSubview(messageView)
-		
-		
-		
+
+		messageViewLeadingOrTrailingConstraint.isActive = false
+		avatarImageViewLeadingOrTrailingConstraint.isActive = false
+
+		switch model.isIncoming {
+		case false:
+			avatarImageViewLeadingOrTrailingConstraint = avatarImageView.leadingAnchor.constraint(
+				equalTo: contentView.leadingAnchor,
+				constant: 10
+			)
+			messageViewLeadingOrTrailingConstraint = messageView.leadingAnchor.constraint(
+				equalTo: contentView.leadingAnchor,
+				constant: 45
+			)
+		case true:
+			avatarImageViewLeadingOrTrailingConstraint = avatarImageView.trailingAnchor.constraint(
+				equalTo: contentView.trailingAnchor,
+				constant: -10
+			)
+			messageViewLeadingOrTrailingConstraint = messageView.trailingAnchor.constraint(
+				equalTo: contentView.trailingAnchor,
+				constant: -45
+			)
+		}
+
+		messageViewLeadingOrTrailingConstraint.isActive = true
+		avatarImageViewLeadingOrTrailingConstraint.isActive = true
 		
 		avatarImageView.image = UIImage(named: "arrow.up.circle.fill") // картинка на время не забыть поменять
 		avatarImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -54,21 +83,10 @@ final class ChatTableViewCell: UITableViewCell  {
 		dateLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
 		dateLabel.widthAnchor.constraint(equalToConstant: 70).isActive = true
 		dateLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
-		
-		switch model.isIncoming {
-		case true:
-			avatarImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10).isActive = true
-			messageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 45).isActive = true
-		case false:
-			avatarImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
-			messageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -45).isActive = true
-		}
 	}
 }
 
 extension ChatTableViewCell: CellConfigurable {
-	
-	
 	typealias ModelCell = ChatTableViewCellModel
 	
 	struct ChatTableViewCellModel {
@@ -78,7 +96,6 @@ extension ChatTableViewCell: CellConfigurable {
 	func configure(with model: ModelCell) {
 		setupConfigureCell(model: model.message)
 	}
-	
 }
 
 

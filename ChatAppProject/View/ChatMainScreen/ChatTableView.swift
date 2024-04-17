@@ -11,6 +11,24 @@ import UIKit
 
 final class ChatTableView: UITableView {
 	// масcив текста для проверки работы таблицы
+	
+	func updateMessagesArray() {
+		
+	}
+	
+	var messages: [MessageViewModel] = [] {
+		didSet {
+			reloadData()
+			
+//			guard isLoading else {
+//				return
+//			}
+			
+//			scrollToRow(at: IndexPath(row: offset, section: 0), at: .top, animated: false)
+//			isLoading = false
+		}
+	}
+	
 	var mokMessages = [
 		MessageViewModel(image: "", date: "25.02", id: "", message: "Hello", isIncoming: false),
 		MessageViewModel(image: "", date: "25.02", id: "", message: "Helsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdlo", isIncoming: false),
@@ -21,14 +39,15 @@ final class ChatTableView: UITableView {
 		MessageViewModel(image: "", date: "25.02", id: "", message: "Helwewlo", isIncoming: false),
 		MessageViewModel(image: "", date: "25.02", id: "", message: "Hellwsdso", isIncoming: true),
 	]
-	
-	var timer: Timer?
+
 	
 	override func didMoveToSuperview() {
 		super.didMoveToSuperview()
 		configureTableVIew()
 //		timer = Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(receiveMessage), userInfo: nil, repeats: false)
 	}
+	
+	
 	
 	private func configureTableVIew() {
 		register(ChatTableViewCell.self, forCellReuseIdentifier: "Cell")
@@ -41,25 +60,19 @@ final class ChatTableView: UITableView {
 	
 	// иммитация работы сервера
 	
-	@objc func receiveMessage() {
-		// Добавляем новое сообщение в массив
-		let newMessage = "Новое сообщение \(mokMessages.count + 1)"
-		mokMessages.append(MessageViewModel.init(image: "sd", date: "s", id: "s", message: newMessage, isIncoming: true))
-		
-		// Обновляем tableView
-		self.reloadData()
-		
-		// Прокручиваем tableView к последнему сообщению
-		scrollToLastMessage()
-	}
-	
-	// Метод для прокрутки к последнему сообщению
-	func scrollToLastMessage() {
-		if !mokMessages.isEmpty {
-			let lastRowIndexPath = IndexPath(row: mokMessages.count - 1, section: 0)
-			self.scrollToRow(at: lastRowIndexPath, at: .bottom, animated: true)
-		}
-	}
+//	@objc func receiveMessage() {
+//		// Добавляем новое сообщение в массив
+//		let newMessage = "Новое сообщение \(mokMessages.count + 1)"
+//		mokMessages.append(MessageViewModel.init(image: "sd", date: "s", id: "s", message: newMessage, isIncoming: true))
+//		print(mokMessages.count)
+//		// Обновляем tableView
+//		
+//		self.reloadData()
+//		
+//		// Прокручиваем tableView к последнему сообщению
+//		scrollToBottom()
+//	}
+
 	
 }
 

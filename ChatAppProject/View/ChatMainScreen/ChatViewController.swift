@@ -9,17 +9,6 @@ import UIKit
 
 class ChatViewController: UIViewController {
 	
-	var mokMessages = [
-		MessageViewModel(image: "", date: "25.02", id: "", message: "Hello", isIncoming: false),
-		MessageViewModel(image: "", date: "25.02", id: "", message: "Helsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdlo", isIncoming: false),
-		MessageViewModel(image: "", date: "25.02", id: "", message: "Helwewlo", isIncoming: false),
-		MessageViewModel(image: "", date: "25.02", id: "", message: "Hellwsdso", isIncoming: true),
-		MessageViewModel(image: "", date: "25.02", id: "", message: "Hello", isIncoming: false),
-		MessageViewModel(image: "", date: "25.02", id: "", message: "Helsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdlo", isIncoming: false),
-		MessageViewModel(image: "", date: "25.02", id: "", message: "Helwewlo", isIncoming: false),
-		MessageViewModel(image: "", date: "25.02", id: "", message: "Hellwsdso", isIncoming: true),
-	]
-	
 	// MARK - Presenter
 	
 	var presenter: ChatPresentationLogic?
@@ -27,7 +16,7 @@ class ChatViewController: UIViewController {
 	// MARK - Views
 
 	private lazy var headerLabel: UILabel = makeTitleScreen()
-	private lazy var chatTableView: UITableView = makeTableView()
+	private lazy var chatTableView: ChatTableView = makeTableView()
 	private lazy var inputContainerView: InputContainerView = makeInputContainer()
 	
 	// MARK: - Lifecycle
@@ -36,23 +25,28 @@ class ChatViewController: UIViewController {
 		super.viewDidLoad()
 		setupConstraints()
 		registerForKeyboardNotifications()
-		
-		
-		
-		
+		setupSendButtonCallback()
 	}
 	
-	
-	
 	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
 		setupInterface()
-		// Прокручиваем таблицу к последнему сообщению
+		DispatchQueue.main.async {
+			self.chatTableView.scrollToBottom(animated: false)
+		}
+		print(chatTableView.frame.height)
+	
+	}
+	
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
 		
 	}
 	
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 		removeNotificationsForKeyboardAppearance()
+		
 	}
 	
 }
@@ -62,17 +56,21 @@ extension ChatViewController {
 	// Инициализация коллбека onSend
 	func setupSendButtonCallback() {
 		inputContainerView.onSend = { [weak self] message in
-			// Здесь вы можете обработать отправленное сообщение
 			print("Отправленное сообщение: \(message)")
 			self?.handleSentMessage(message)
-			// Дополнительная логика обработки отправленного сообщения
 		}
 	}
 	
 	// Метод для обработки отправленного сообщения
 	func handleSentMessage(_ message: String) {
+		let newMessage = MessageViewModel.init(image: "sd", date: "s", id: "s", message: message, isIncoming: true)
+		chatTableView.mokMessages.append(newMessage)
+		chatTableView.reloadData()
+		DispatchQueue.main.async {
+			self.chatTableView.scrollToBottom(animated: false)
+		}
 		// Добавление сообщения в массив
-	
+		
 		
 		// Обновление таблицы (если используется UITableView для отображения сообщений)
 		// tableView.reloadData()
@@ -81,6 +79,7 @@ extension ChatViewController {
 		// scrollToLastMessage()
 	}
 }
+
 
 
 extension ChatViewController {
@@ -101,23 +100,26 @@ extension ChatViewController {
 		let keyboardScreenEndFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
 		
 		if notification.name == UIResponder.keyboardWillHideNotification {
-			chatTableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-		} else if chatTableView.contentInset.bottom == 0 {
-			print("One")
+			
+		} else { // chatTableView.contentInset.bottom == 0
+			print(chatTableView.frame.height)
 			// Увеличение bottom inset на высоту клавиатуры
-			print("Before contentInset: \(chatTableView.contentInset)")
-			print("Before contentOffset: \(chatTableView.contentOffset)")
-			chatTableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardScreenEndFrame.height + 200, right: 0)
+//			print("Before contentInset: \(chatTableView.contentInset)")
+//			print("Before contentOffset: \(chatTableView.contentOffset)")
+//			chatTableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardScreenEndFrame.height + 200, right: 0)
+//			chatTableView.setContentOffset(CGPoint(x: 0, y: -keyboardScreenEndFrame.height), animated: true)
 			// Установка contentOffset для смещения контента таблицы вверх
-			chatTableView.setContentOffset(CGPoint(x: 0, y: -keyboardScreenEndFrame.height), animated: true)
-			print("After contentInset: \(chatTableView.contentInset)")
-			print("After contentOffset: \(chatTableView.contentOffset)")
+		
+//			print("After contentInset: \(chatTableView.contentInset)")
+//			print("After contentOffset: \(chatTableView.contentOffset)")
 			
 			
 		}
 		
 		view.needsUpdateConstraints()
+		chatTableView.scrollToBottom(animated: false)
 		UIView.animate(withDuration: animationDuration) {
+		
 			self.view.layoutIfNeeded()
 		}
 	}
@@ -191,12 +193,6 @@ extension ChatViewController {
 		headerLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16).isActive = true
 		headerLabel.heightAnchor.constraint(equalToConstant: 100).isActive = true
 		
-//		scrollView.translatesAutoresizingMaskIntoConstraints = false
-//		scrollView.topAnchor.constraint(equalTo: headerLabel.bottomAnchor).isActive = true
-//		scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16).isActive = true
-//		scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16).isActive = true
-//		scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16).isActive = true
-		
 		chatTableView.translatesAutoresizingMaskIntoConstraints = false
 		chatTableView.topAnchor.constraint(equalTo: headerLabel.bottomAnchor).isActive = true
 		chatTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
@@ -208,5 +204,6 @@ extension ChatViewController {
 		inputContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
 		inputContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
 		inputContainerView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -16).isActive = true
+		
 	}
 }

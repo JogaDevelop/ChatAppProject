@@ -16,21 +16,23 @@ final class ChatBubbleView: UIView {
 		return label
 	}()
 	
-	var incoming = false
+	var incoming = false {
+		didSet {
+			backgroundColor = incoming ? .systemBlue : .systemGray4
+			messageLabel.textColor = incoming ?  .white : .black 
+		}
+	}
 	
 		
 	override func didMoveToSuperview() {
 		super.didMoveToSuperview()
 		setupConstraint()
 		setupConfigure()
-		
 	}
 	
 	private func setupConfigure() {
-		backgroundColor = incoming ? .systemGray4 : .systemBlue
 		layer.cornerRadius = 20
 		clipsToBounds = true
-		messageLabel.textColor = incoming ? .black : .white
 	}
 	
 	private func setupConstraint() {
