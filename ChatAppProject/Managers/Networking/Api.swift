@@ -8,5 +8,5 @@
 import Foundation
 
 struct API {
-	static let url = "https://numia.ru/api"
+	static let url = "https://numia.ru/api/getMessages?offset=60"
 }

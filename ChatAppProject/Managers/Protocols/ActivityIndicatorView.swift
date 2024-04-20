@@ -20,6 +20,10 @@ extension ActivityIndicatorSpinner  {
 		let activityView = UIActivityIndicatorView(style: .large)
 		activityView.center = self.view.center
 		activityView.tag = 80
+		let overlayView = UIView(frame: UIScreen.main.bounds)
+		overlayView.backgroundColor = UIColor.white.withAlphaComponent(0.5)
+		overlayView.tag = 81
+		self.view.addSubview(overlayView)
 		self.view.addSubview(activityView)
 		activityView.startAnimating()
 		self.view.isUserInteractionEnabled = false
@@ -29,6 +33,8 @@ extension ActivityIndicatorSpinner  {
 	func hideSpinner() {
 		guard let self = self as? UIViewController else { return }
 		guard let loadingView = self.view.viewWithTag(80) else { return }
+		guard let overlayView = self.view.viewWithTag(81) else { return }
+		overlayView.removeFromSuperview()
 		loadingView.removeFromSuperview()
 		self.view.isUserInteractionEnabled = true
 	}

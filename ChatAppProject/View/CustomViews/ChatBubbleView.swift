@@ -23,13 +23,14 @@ final class ChatBubbleView: UIView {
 		}
 	}
 	
+	
 		
 	override func didMoveToSuperview() {
 		super.didMoveToSuperview()
 		setupConstraint()
 		setupConfigure()
 	}
-	
+		
 	private func setupConfigure() {
 		layer.cornerRadius = 20
 		clipsToBounds = true

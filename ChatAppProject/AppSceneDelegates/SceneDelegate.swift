@@ -21,6 +21,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		
 		let navigationController = UINavigationController()
 		let chatViewController = ChatViewController()
+		
+		let presenterNew = ChatPresenter(view: chatViewController, networkManager: NetworkServiceManager())
+		chatViewController.presenter = presenterNew
+		
 		navigationController.viewControllers = [chatViewController]
 		window?.rootViewController = navigationController
 		window?.makeKeyAndVisible()

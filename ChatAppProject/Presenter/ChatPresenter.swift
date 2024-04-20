@@ -9,10 +9,66 @@ import UIKit
 
 
 protocol ChatPresentationLogic: AnyObject {
-	
+	func fetchMessages(offset: Int) async
+//	func fetchLocalMessages() async -> [MessageViewModel]
+//	func saveMessageInDataManager(message: MessageViewModel)
+//	func showMessageDetailScreen(_ message: MessageViewModel, at index: Int)
 }
 
 final class ChatPresenter: ChatPresentationLogic {
+	
+	
+	private weak var view: ChatMainScreen?
+	private let networkManager: NetworkService
+	//	private let storageManager: StorageManagerProtocol // потом добавить манаджер storageManager
+	
+	private(set) var messages: [MessageViewModel] = []
+//	private var offSet = 0
+	
+	
+	
+	
+	
+	init(view: ChatMainScreen? = nil, networkManager: NetworkService) {
+		self.view = view
+		self.networkManager = networkManager
+	}
+	
+	
+	
+	@MainActor func fetchMessages(offset: Int) async {
+		view?.showSpinner()
+		let network = NetworkServiceManager()
+		let result = await network.fetchMessages(offset: offset)
+		
+		switch result {
+		case .success(let data):
+			guard data.result.count > 0 else {
+				view?.hideSpinner()
+				return
+			}
+			var messagesArray: [MessageViewModel] = []
+			data.result.indices.forEach {
+				messagesArray.append(
+					MessageViewModel(
+						image: "https://cdn1.iconfinder.com/data/icons/diversity-avatars-volume-1-heads/64/matrix-neo-man-white-512.png",
+						date: "25.02",
+						id: "Id",
+						message: data.result[$0],
+						isIncoming: true)
+				)
+			}
+			
+			
+			await view?.updateUI(with: messagesArray)
+			view?.hideSpinner()
+		case .failure(let error):
+			view?.hideSpinner()
+			view?.showErrorDidFinishedRequestError(with: ResponseWithError(offSet: offset, errorMessage: error.rawValue))
+			print(error.rawValue)
+		}
+	}
+	
 	
 	//MARK: - Properties
 	

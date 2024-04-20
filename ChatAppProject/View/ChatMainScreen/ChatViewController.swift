@@ -7,6 +7,11 @@
 
 import UIKit
 
+protocol ChatMainScreen: AnyObject, ActivityIndicatorSpinner {
+	func updateUI(with messages: [MessageViewModel]) async
+	func showErrorDidFinishedRequestError(with response: ResponseWithError)
+}
+
 class ChatViewController: UIViewController {
 	
 	// MARK - Presenter
@@ -26,16 +31,12 @@ class ChatViewController: UIViewController {
 		setupConstraints()
 		registerForKeyboardNotifications()
 		setupSendButtonCallback()
+		loadInitialData()
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		setupInterface()
-		DispatchQueue.main.async {
-			self.chatTableView.scrollToBottom(animated: false)
-		}
-		print(chatTableView.frame.height)
-	
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
@@ -46,15 +47,13 @@ class ChatViewController: UIViewController {
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 		removeNotificationsForKeyboardAppearance()
-		
 	}
 	
 }
 
-
 extension ChatViewController {
-	// Инициализация коллбека onSend
-	func setupSendButtonCallback() {
+	// Инициализация коллбека onSend из inputConteiner при нажатии кнопки отправить
+	private func setupSendButtonCallback() {
 		inputContainerView.onSend = { [weak self] message in
 			print("Отправленное сообщение: \(message)")
 			self?.handleSentMessage(message)
@@ -62,70 +61,74 @@ extension ChatViewController {
 	}
 	
 	// Метод для обработки отправленного сообщения
-	func handleSentMessage(_ message: String) {
-		let newMessage = MessageViewModel.init(image: "sd", date: "s", id: "s", message: message, isIncoming: true)
-		chatTableView.mokMessages.append(newMessage)
+	private func handleSentMessage(_ message: String) {
+		let newMessage = MessageViewModel.init(
+			image: "sd",
+			date: "s",
+			id: "s",
+			message: message,
+			isIncoming: true
+		)
+		chatTableView.messages.append(newMessage)
 		chatTableView.reloadData()
 		DispatchQueue.main.async {
 			self.chatTableView.scrollToBottom(animated: false)
 		}
-		// Добавление сообщения в массив
-		
-		
-		// Обновление таблицы (если используется UITableView для отображения сообщений)
-		// tableView.reloadData()
-		
-		// Прокрутка таблицы к новому сообщению
-		// scrollToLastMessage()
 	}
 }
 
-
+extension ChatViewController: ChatMainScreen {
+	func showErrorDidFinishedRequestError(with response: ResponseWithError) {
+		showErrorView(offSet :response.offSet, errorMessage: response.errorMessage)
+	}
+	
+	func updateUI(with messages: [MessageViewModel]) async {
+		DispatchQueue.main.async {
+			self.chatTableView.fetchMessagesCount = messages.count
+			self.chatTableView.fetchData(messages: messages)
+		}
+	}
+}
 
 extension ChatViewController {
-	
-	private func removeNotificationsForKeyboardAppearance() {
-		NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-		NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-	}
-	
-	private func registerForKeyboardNotifications() {
-		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-	}
-	
-	@objc private func keyboardWillShow(_ notification: NSNotification) {
-		let userInfo = notification.userInfo!
-		let animationDuration = (userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as! NSNumber).doubleValue
-		let keyboardScreenEndFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
+	private func showErrorView(offSet: Int, errorMessage: String) {
+		/// Настройка всплывающей вью при ошибке запроса на сервер, с предложением еще раз обновить данные
+		let errorView = ErrorView()
+		errorView.center = self.view.center
+		errorView.titleLabel.text = errorMessage
 		
-		if notification.name == UIResponder.keyboardWillHideNotification {
-			
-		} else { // chatTableView.contentInset.bottom == 0
-			print(chatTableView.frame.height)
-			// Увеличение bottom inset на высоту клавиатуры
-//			print("Before contentInset: \(chatTableView.contentInset)")
-//			print("Before contentOffset: \(chatTableView.contentOffset)")
-//			chatTableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardScreenEndFrame.height + 200, right: 0)
-//			chatTableView.setContentOffset(CGPoint(x: 0, y: -keyboardScreenEndFrame.height), animated: true)
-			// Установка contentOffset для смещения контента таблицы вверх
-		
-//			print("After contentInset: \(chatTableView.contentInset)")
-//			print("After contentOffset: \(chatTableView.contentOffset)")
-			
-			
+		errorView.onRetry = { [weak self] in // Обработчики действий для кнопок во всплывающей вью
+			Task {
+				await self?.presenter?.fetchMessages(offset: offSet)// Повторная загрузка данных через презентер
+			}
+			self?.hideErrorView(errorView: errorView) // Скрыть и деинициализировать всплывающую вью
 		}
 		
-		view.needsUpdateConstraints()
-		chatTableView.scrollToBottom(animated: false)
-		UIView.animate(withDuration: animationDuration) {
-		
-			self.view.layoutIfNeeded()
+		errorView.onCancel = { [weak self] in
+			self?.hideErrorView(errorView: errorView) // Скрыть и деинициализировать всплывающую вью
 		}
+		self.view.addSubview(errorView)
 	}
 	
+	private func hideErrorView(errorView: ErrorView) {
+		// Удаление всплывающей вьюшки из иерархии вью и деинициализация
+		errorView.removeFromSuperview()
+		errorView.onRetry = nil
+		errorView.onCancel = nil
+	}
 }
 
+extension ChatViewController: TableViewInteractionDelegate {
+	func requestNextPageMessages(offset: Int) {
+		Task {
+			await presenter?.fetchMessages(offset: offset)
+		}
+	}
+	
+	func showMessageDetail(with message: MessageViewModel, at index: Int) {
+		
+	}
+}
 
 extension ChatViewController {
 	private func setupInterface() {
@@ -133,27 +136,16 @@ extension ChatViewController {
 		view.backgroundColor = .systemBackground
 	}
 	
-//	@objc private func sendMessage() {
-//		
-//		
-//	}
-//	
-//		private func configureSendButton() {
-//	
-//			buttonSendMessage.addTarget(self, action: #selector(sendButtonTapped), for: .touchUpInside)
-//	
-//			NSLayoutConstraint.activate([
-//				buttonSendMessage.topAnchor.constraint(equalTo: view.topAnchor, constant: 10),
-//				buttonSendMessage.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-//				buttonSendMessage.heightAnchor.constraint(equalToConstant: 40),
-//				buttonSendMessage.widthAnchor.constraint(equalToConstant: 40)
-//			])
-//		}
-//	
-//	
-//		@objc func sendButtonTapped() {
-//			print("presed button")
-//		}
+	private func loadInitialData() {
+		chatTableView.eventsDelegate = self
+		Task {
+			await presenter?.fetchMessages(offset: 0)
+			DispatchQueue.main.async {
+				self.chatTableView.reloadData()
+				self.chatTableView.scrollToBottom(animated: false)
+			}
+		}
+	}
 }
 
 /// Методы для инициализации и настройки UI, lazy свойств наших Views.
@@ -163,11 +155,6 @@ extension ChatViewController {
 		label.text = "Тестовое задание"
 		label.font = .systemFont(ofSize: 30, weight: .black)
 		return label
-	}
-	
-	private func makeSrollView() -> UIScrollView {
-		let scrollView = UIScrollView()
-		return scrollView
 	}
 	
 	private func makeTableView() -> ChatTableView {
@@ -182,7 +169,6 @@ extension ChatViewController {
 	}
 	
 	private func setupConstraints() {
-
 		view.addSubview(headerLabel)
 		view.addSubview(chatTableView)
 		view.addSubview(inputContainerView)
@@ -199,11 +185,43 @@ extension ChatViewController {
 		chatTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
 		chatTableView.bottomAnchor.constraint(equalTo: inputContainerView.topAnchor).isActive = true
 
-		
 		inputContainerView.translatesAutoresizingMaskIntoConstraints = false
 		inputContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
 		inputContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
 		inputContainerView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -16).isActive = true
+	}
+}
+
+extension ChatViewController {
+	private func removeNotificationsForKeyboardAppearance() {
+		NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+		NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+	}
+	
+	private func registerForKeyboardNotifications() {
+		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+	}
+	
+	@objc private func keyboardWillShow(_ notification: NSNotification) {
+		let userInfo = notification.userInfo!
+		let animationDuration = (userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as! NSNumber).doubleValue
+		let keyboardScreenEndFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
 		
+		if notification.name == UIResponder.keyboardWillShowNotification {
+			if self.view.frame.origin.y == 0 {
+				self.view.frame.origin.y -= keyboardScreenEndFrame.height
+			}
+		} else {
+			if self.view.frame.origin.y != 0 {
+				self.view.frame.origin.y = 0
+			}
+		}
+		
+		view.needsUpdateConstraints()
+		
+		UIView.animate(withDuration: animationDuration) {
+			self.view.layoutIfNeeded()
+		}
 	}
 }

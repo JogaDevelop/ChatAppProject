@@ -49,7 +49,8 @@ class InputContainerView: UIView, UITextViewDelegate {
 		addSubview(messageTextView)
 		
 		// Настройка кнопки отправки
-		sendMessageButton.setTitle("Send", for: .normal)
+		let configuration = UIImage.SymbolConfiguration(pointSize: 24)
+		sendMessageButton.setImage(UIImage(systemName: "arrow.up.circle.fill", withConfiguration: configuration), for: .normal)
 		sendMessageButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
 		sendMessageButton.translatesAutoresizingMaskIntoConstraints = false
 		addSubview(sendMessageButton)
@@ -68,7 +69,7 @@ class InputContainerView: UIView, UITextViewDelegate {
 			sendMessageButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
 			sendMessageButton.centerYAnchor.constraint(equalTo: centerYAnchor),
 			sendMessageButton.heightAnchor.constraint(equalToConstant: 30),
-			sendMessageButton.widthAnchor.constraint(equalToConstant: 80),
+			sendMessageButton.widthAnchor.constraint(equalToConstant: 30),
 			
 			placeholder.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
 			placeholder.topAnchor.constraint(equalTo: topAnchor, constant: 5),

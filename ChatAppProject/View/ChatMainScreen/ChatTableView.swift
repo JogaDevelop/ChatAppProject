@@ -7,38 +7,38 @@
 
 import UIKit
 
-
+protocol TableViewInteractionDelegate: AnyObject {
+	func requestNextPageMessages(offset: Int)
+	func showMessageDetail(with message: MessageViewModel, at index: Int)
+}
 
 final class ChatTableView: UITableView {
 	// масcив текста для проверки работы таблицы
 	
-	func updateMessagesArray() {
-		
+	weak var eventsDelegate: TableViewInteractionDelegate?
+	
+	private var offSet = 0
+	
+	var fetchMessagesCount = 0 {
+		didSet {
+			offSet += fetchMessagesCount
+		}
 	}
+	/// не забыдь
+	private var isLoading = false
 	
 	var messages: [MessageViewModel] = [] {
 		didSet {
-			reloadData()
+			self.reloadData()
 			
-//			guard isLoading else {
-//				return
-//			}
-			
-//			scrollToRow(at: IndexPath(row: offset, section: 0), at: .top, animated: false)
-//			isLoading = false
+			guard isLoading else {
+				print("JJDsjkdjsk")
+				return
+			}
+			scrollToRow(at: IndexPath(row: fetchMessagesCount - 1, section: 0), at: .top, animated: false)
+			isLoading = false
 		}
 	}
-	
-	var mokMessages = [
-		MessageViewModel(image: "", date: "25.02", id: "", message: "Hello", isIncoming: false),
-		MessageViewModel(image: "", date: "25.02", id: "", message: "Helsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdlo", isIncoming: false),
-		MessageViewModel(image: "", date: "25.02", id: "", message: "Helwewlo", isIncoming: false),
-		MessageViewModel(image: "", date: "25.02", id: "", message: "Hellwsdso", isIncoming: true),
-		MessageViewModel(image: "", date: "25.02", id: "", message: "Hello", isIncoming: false),
-		MessageViewModel(image: "", date: "25.02", id: "", message: "Helsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdlo", isIncoming: false),
-		MessageViewModel(image: "", date: "25.02", id: "", message: "Helwewlo", isIncoming: false),
-		MessageViewModel(image: "", date: "25.02", id: "", message: "Hellwsdso", isIncoming: true),
-	]
 
 	
 	override func didMoveToSuperview() {
@@ -50,28 +50,11 @@ final class ChatTableView: UITableView {
 	
 	
 	private func configureTableVIew() {
-		register(ChatTableViewCell.self, forCellReuseIdentifier: "Cell")
+		register(ChatTableViewCell.self, forCellReuseIdentifier: .messagesCell)
 		self.separatorStyle = .none
 		delegate = self
 		dataSource = self
 	}
-	
-	
-	
-	// иммитация работы сервера
-	
-//	@objc func receiveMessage() {
-//		// Добавляем новое сообщение в массив
-//		let newMessage = "Новое сообщение \(mokMessages.count + 1)"
-//		mokMessages.append(MessageViewModel.init(image: "sd", date: "s", id: "s", message: newMessage, isIncoming: true))
-//		print(mokMessages.count)
-//		// Обновляем tableView
-//		
-//		self.reloadData()
-//		
-//		// Прокручиваем tableView к последнему сообщению
-//		scrollToBottom()
-//	}
 
 	
 }
@@ -79,18 +62,18 @@ final class ChatTableView: UITableView {
 extension ChatTableView: UITableViewDataSource, UITableViewDelegate {
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 //		mokMessages.count
-		return mokMessages.count
+		return messages.count
 	}
 	
 	
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! ChatTableViewCell
+		let cell = tableView.dequeueReusableCell(withIdentifier: .messagesCell, for: indexPath) as! ChatTableViewCell
 		
 //		let model = MessageViewModel(image: "", date: "23", id: "", message: mokMessages[indexPath.row].message, isIncoming: true)
 //		mokMessages.append(model)
 		
-		cell.configure(with: ChatTableViewCell.ModelCell.init(message: mokMessages[indexPath.row]))
+		cell.configure(with: ChatTableViewCell.ModelCell.init(message: messages[indexPath.row]))
 //		self.scrollToRow(at: indexPath, at: .bottom, animated: true)
 	
 		return cell
@@ -98,7 +81,75 @@ extension ChatTableView: UITableViewDataSource, UITableViewDelegate {
 	
 	}
 	
+//	func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+//		guard isLoading == false, numberOfRowsToEndFrom(indexPath: indexPath) + savedMessagesCount < 5 else {
+//			return
+//		}
+//
+//		eventsDelegate?.requestForNextPage(offset: messages.count)
+//		isLoading = true
+//	}
+//
+	
+	
+}
+
+extension ChatTableView {
+	// Метод для прокрутки к последней ячейке
+	func scrollToBottom(animated: Bool = true) {
+		let lastSection = numberOfSections - 1
+		let lastRow = numberOfRows(inSection: lastSection) - 1
+		if lastSection >= 0 && lastRow >= 0 {
+			let indexPath = IndexPath(row: lastRow, section: lastSection)
+//			isLoading = true
+			scrollToRow(at: indexPath, at: .bottom, animated: animated)
+		}
+//		isLoading = false
+	}
+	
+	func removeSelectedMessage() {
+		// Код для удаления сообщений из данных и обновления таблицы
+	}
+	
+	//	func scrollToTop(animated: Bool = true) {
+	//		let indexPath = IndexPath(row: 0, section: 0)
+	//	}
 	
 	
 	
+	func scrollViewDidScroll(_ scrollView: UIScrollView) {
+		//			let maximumOffset = scrollView.contentSize.height - scrollView.frame.size.height
+		let tableView = scrollView as! ChatTableView
+
+		guard isLoading == false else { return }
+
+		//
+		
+		let position = tableView.contentOffset.y
+		
+		
+		
+
+		if position < 150 { // Проверка, что скроллим вверх и достигли верхней границы с некоторым запасом
+			print("загрузка новыых")
+		
+
+
+//						scrollView.isScrollEnabled = false
+
+			eventsDelegate?.requestNextPageMessages(offset: offSet)
+			isLoading = true
+		}
+		//		scrollView.isScrollEnabled = true
+
+	}
+	
+	func fetchData(messages: [MessageViewModel])  {
+		let newMessages = messages
+		self.messages.insert(contentsOf: newMessages, at: 0)
+	}
+}
+
+private extension String {
+	static let messagesCell = "MessagesCell"
 }
