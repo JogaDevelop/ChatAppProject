@@ -52,6 +52,8 @@ final class ChatTableViewCell: UITableViewCell  {
 				equalTo: contentView.leadingAnchor,
 				constant: 45
 			)
+			let image = ImageCacheManager.shared.getImage(forKey: ImageURLs.otherPhoto.urlString) ?? UIImage(systemName: "person")
+			avatarImageView.image = image
 		case false:
 			avatarImageViewLeadingOrTrailingConstraint = avatarImageView.trailingAnchor.constraint(
 				equalTo: contentView.trailingAnchor,
@@ -61,12 +63,14 @@ final class ChatTableViewCell: UITableViewCell  {
 				equalTo: contentView.trailingAnchor,
 				constant: -45
 			)
+			let image = ImageCacheManager.shared.getImage(forKey: ImageURLs.myPhoto.urlString) ?? UIImage(systemName: "person")
+			avatarImageView.image = image
 		}
 
 		messageViewLeadingOrTrailingConstraint.isActive = true
 		avatarImageViewLeadingOrTrailingConstraint.isActive = true
 		
-		avatarImageView.image = UIImage(systemName: "person") // картинка на время не забыть поменять
+		
 		avatarImageView.translatesAutoresizingMaskIntoConstraints = false
 		avatarImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5).isActive = true
 		avatarImageView.heightAnchor.constraint(equalToConstant: 30).isActive = true

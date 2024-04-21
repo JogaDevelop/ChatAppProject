@@ -1,5 +1,5 @@
 //
-//  ErrorResponse.swift
+//  ErrorFetchMessages.swift
 //  ChatAppProject
 //
 //  Created by Evgeny Kislitsin on 18.04.2024.

@@ -1,5 +1,5 @@
 //
-//  ChatDetailMessageViewController.swift
+//  DetailMessageViewController.swift
 //  ChatAppProject
 //
 //  Created by Evgeny Kislitsin on 09.04.2024.
@@ -94,7 +94,7 @@ extension ChatDetailMessageViewController {
 	private func setupContent() {
 		messageLabel.text = message.message
 		dateLabel.text = message.date
-		avatarImageView.image = UIImage(systemName: "person")
+		avatarImageView.image = ImageCacheManager.shared.getImage(forKey: message.image) ?? UIImage(systemName: "person")
 	}
 }
 

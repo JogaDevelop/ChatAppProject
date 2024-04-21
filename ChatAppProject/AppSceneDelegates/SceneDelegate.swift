@@ -15,22 +15,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		willConnectTo session: UISceneSession,
 		options connectionOptions: UIScene.ConnectionOptions)
 	{
-//		guard let windowScene = (scene as? UIWindowScene) else { return }
-//		window = UIWindow(frame: windowScene.coordinateSpace.bounds)
-//		window?.windowScene = windowScene
-//
-//		let navigationController = UINavigationController()
-//		let chatViewController = ChatViewController()
-//
-//		let presenterNew = ChatPresenter(view: chatViewController, networkManager: NetworkServiceManager())
-//		chatViewController.presenter = presenterNew
-//
-//		navigationController.viewControllers = [chatViewController]
-//		window?.rootViewController = navigationController
-//		window?.makeKeyAndVisible()
-		
-		
-		
 		guard let windowScene = (scene as? UIWindowScene) else { return }
 		window = UIWindow(frame: windowScene.coordinateSpace.bounds)
 		window?.windowScene = windowScene

@@ -133,8 +133,8 @@ extension ChatViewController {
 	}
 	
 	private func loadInitialData() {
-		chatTableView.eventsDelegate = self
 		Task {
+			await presenter?.fetchAvatars()
 			await presenter?.fetchMessages(offset: 0)
 		}
 	}

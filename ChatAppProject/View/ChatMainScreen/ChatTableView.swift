@@ -63,7 +63,8 @@ extension ChatTableView: UITableViewDataSource, UITableViewDelegate {
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: .messagesCell, for: indexPath) as! ChatTableViewCell
-		cell.configure(with: ChatTableViewCell.ModelCell.init(message: messages[indexPath.row]))
+		let message = messages[indexPath.row]
+		cell.configure(with: ChatTableViewCell.ModelCell.init(message: message))
 		return cell
 	}
 	
@@ -99,3 +100,4 @@ extension ChatTableView {
 private extension String {
 	static let messagesCell = "MessagesCell"
 }
+

@@ -7,15 +7,29 @@
 
 import UIKit
 
-
 protocol ChatPresentationLogic: AnyObject {
 	func fetchMessages(offset: Int) async
-//	func fetchLocalMessages() async -> [MessageViewModel]
-//	func saveMessageInDataManager(message: MessageViewModel)
-//	func showMessageDetailScreen(_ message: MessageViewModel, at index: Int)
+	func fetchAvatars() async
+	func saveMessageInDataManager(message: MessageViewModel)
 }
 
 final class ChatPresenter: ChatPresentationLogic {
+	func fetchAvatars() async {
+		let myUrlAvatar = ImageURLs.myPhoto.urlString
+		if let myAvatar = await networkManager.fetchImage(from: myUrlAvatar) {
+			ImageCacheManager.shared.setImage(myAvatar, forKey: myUrlAvatar)
+		}
+		
+		let otherUrlAvatar = ImageURLs.otherPhoto.urlString
+		if let otherAvatar = await networkManager.fetchImage(from: ImageURLs.otherPhoto.urlString) {
+			ImageCacheManager.shared.setImage(otherAvatar, forKey: otherUrlAvatar)
+		}
+	}
+	
+	func saveMessageInDataManager(message: MessageViewModel) {
+		
+	}
+	
 	
 	
 	private weak var view: ChatMainScreen?
@@ -25,21 +39,34 @@ final class ChatPresenter: ChatPresentationLogic {
 	private(set) var messages: [MessageViewModel] = []
 //	private var offSet = 0
 	
-	
-	
-	
-	
 	init(view: ChatMainScreen? = nil, networkManager: NetworkService) {
 		self.view = view
 		self.networkManager = networkManager
 	}
 	
 	
+	private func mapMessageData(messages: [String]) -> [MessageViewModel] {
+		var messagesArray: [MessageViewModel] = []
+		messages.indices.forEach {
+			messagesArray.append(
+				MessageViewModel(
+					image: ImageURLs.otherPhoto.urlString,
+					date: Date.formattedCurrentTimeWithDayTime(),
+					id: String($0),
+					message: messages[$0],
+					isIncoming: true)
+			)
+		}
+		let sortedMessage = messagesArray.sorted(by: { Int($0.id)! > Int($1.id)! })
+		return sortedMessage
+	}
+	
+	
+	
 	
 	@MainActor func fetchMessages(offset: Int) async {
 		view?.showSpinner()
-		let network = NetworkServiceManager()
-		let result = await network.fetchMessages(offset: offset)
+		let result = await networkManager.fetchMessages(offset: offset)
 		
 		switch result {
 		case .success(let data):
@@ -47,22 +74,9 @@ final class ChatPresenter: ChatPresentationLogic {
 				view?.hideSpinner()
 				return
 			}
-			var messagesArray: [MessageViewModel] = []
-			data.result.indices.forEach {
-				messagesArray.append(
-					MessageViewModel(
-						image: "https://cdn4.iconfinder.com/data/icons/avatars-xmas-giveaway/128/man_male_avatar_portrait-256.png",
-						date: Date.formattedCurrentTimeWithDayTime(),
-						id: String($0),
-						message: data.result[$0],
-						isIncoming: true)
-				)
-			}
-			let sortedMessage = messagesArray.sorted(by: { Int($0.id)! > Int($1.id)! })
-			
-			
-			
-			await view?.updateUI(with: sortedMessage)
+			let messages = mapMessageData(messages: data.result)
+	
+			await view?.updateUI(with: messages)
 			DispatchQueue.main.async {
 				self.view?.isFirstLaunch = false
 			}
@@ -78,3 +92,4 @@ final class ChatPresenter: ChatPresentationLogic {
 	//MARK: - Properties
 	
 }
+

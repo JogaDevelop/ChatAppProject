@@ -7,12 +7,7 @@
 
 import UIKit
 
-
-
-
 class NetworkServiceManager: NetworkService {
-	
-	private let cache = NSCache<NSString, UIImage>()
 	
 	func fetchMessages(offset: Int) async -> Result<MessagesResponse, RequestError> {
 		guard let url = Endpoint.getMessages(offset: offset).url else { return .failure(.badUrl) }
@@ -36,7 +31,7 @@ class NetworkServiceManager: NetworkService {
 		}
 	}
 	
-	func fetchAvatar(from urlString: String) async -> UIImage? {
+	func fetchImage(from urlString: String) async -> UIImage? {
 		guard let url = URL(string: urlString) else   {
 			return nil
 		}
@@ -49,26 +44,4 @@ class NetworkServiceManager: NetworkService {
 			return nil
 		}
 	}
-	
-	func downloadImage(from urlString: String) async -> UIImage? {
-		if let cachedImage = cache.object(forKey: NSString(string: urlString)) {
-			return cachedImage
-		} else if let fetchAvatar = await fetchAvatar(from: urlString) {
-			cache.setObject(fetchAvatar, forKey: NSString(string: urlString))
-			return fetchAvatar
-		}
-		return nil
-	}
-	
-	
-}
-
-
-enum RequestError:String, Error {
-	case statusCodeError = "status code Error"
-	case invalidResponseError = "invalid response Error"
-	case connectionError = "connection Error"
-	case decodingError = "decoding Error"
-	case unknownError = "unknown Error"
-	case badUrl = "invalid url adress"
 }

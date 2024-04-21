@@ -50,8 +50,6 @@ final class Router: RouterProtocol {
 			topViewController.view.addSubview(errorView)
 		}
 	}
-	
-	
 }
 
 

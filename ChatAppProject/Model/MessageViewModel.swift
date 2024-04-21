@@ -8,7 +8,7 @@
 import Foundation
 
 struct MessageViewModel {
-	let image: String?
+	let image: String
 	let date: String
 	let id: String
 	let message: String

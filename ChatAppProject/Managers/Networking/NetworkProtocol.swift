@@ -9,8 +9,7 @@ import UIKit
 
 protocol NetworkService: AnyObject {
 	func fetchMessages(offset: Int) async -> Result<MessagesResponse, RequestError>
-	func fetchAvatar(from urlString: String) async -> UIImage?
-	func downloadImage(from urlString: String) async -> UIImage?
+	func fetchImage(from urlString: String) async -> UIImage?
 }
 
 extension NetworkService {
