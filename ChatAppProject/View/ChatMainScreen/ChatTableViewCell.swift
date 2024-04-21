@@ -43,7 +43,7 @@ final class ChatTableViewCell: UITableViewCell  {
 		avatarImageViewLeadingOrTrailingConstraint.isActive = false
 
 		switch model.isIncoming {
-		case false:
+		case true:
 			avatarImageViewLeadingOrTrailingConstraint = avatarImageView.leadingAnchor.constraint(
 				equalTo: contentView.leadingAnchor,
 				constant: 10
@@ -52,7 +52,7 @@ final class ChatTableViewCell: UITableViewCell  {
 				equalTo: contentView.leadingAnchor,
 				constant: 45
 			)
-		case true:
+		case false:
 			avatarImageViewLeadingOrTrailingConstraint = avatarImageView.trailingAnchor.constraint(
 				equalTo: contentView.trailingAnchor,
 				constant: -10
@@ -66,7 +66,7 @@ final class ChatTableViewCell: UITableViewCell  {
 		messageViewLeadingOrTrailingConstraint.isActive = true
 		avatarImageViewLeadingOrTrailingConstraint.isActive = true
 		
-		avatarImageView.image = UIImage(named: "arrow.up.circle.fill") // картинка на время не забыть поменять
+		avatarImageView.image = UIImage(systemName: "person") // картинка на время не забыть поменять
 		avatarImageView.translatesAutoresizingMaskIntoConstraints = false
 		avatarImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5).isActive = true
 		avatarImageView.heightAnchor.constraint(equalToConstant: 30).isActive = true
@@ -81,7 +81,7 @@ final class ChatTableViewCell: UITableViewCell  {
 		dateLabel.translatesAutoresizingMaskIntoConstraints = false
 		dateLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5).isActive = true
 		dateLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
-		dateLabel.widthAnchor.constraint(equalToConstant: 70).isActive = true
+		dateLabel.widthAnchor.constraint(equalToConstant: 90).isActive = true
 		dateLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
 	}
 }

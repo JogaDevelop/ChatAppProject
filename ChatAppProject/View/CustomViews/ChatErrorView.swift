@@ -1,5 +1,5 @@
 //
-//  ErrorResponseView.swift
+//  ChatErrorView.swift
 //  ChatAppProject
 //
 //  Created by Evgeny Kislitsin on 13.04.2024.
@@ -7,10 +7,15 @@
 
 import UIKit
 
+protocol ErrorViewDelegate: AnyObject {
+	func onRetry(offSet: Int)
+	func onCancel()
+}
+
 class ErrorView: UIView {
 	
-	var onRetry: (() -> Void)?
-	var onCancel: (() -> Void)?
+	var offSet: Int = 0
+	weak var delegate: ErrorViewDelegate?
 	
 	let titleLabel: UILabel = {
 		let label = UILabel()
@@ -58,7 +63,7 @@ class ErrorView: UIView {
 	}
 	
 	deinit {
-		print("deinit errorVIew")
+		print("deinit errorView")
 	}
 	
 	private func setupViews() {
@@ -99,14 +104,13 @@ class ErrorView: UIView {
 	}
 	
 	@objc private func didTapRetry() {
-		onRetry?()
+		delegate?.onRetry(offSet: offSet)
 		removeFromSuperview()
 	}
 	
 	@objc private func didTapCancel() {
-		onCancel?()
+		delegate?.onCancel()
 		removeFromSuperview()
 	}
 }
-
 

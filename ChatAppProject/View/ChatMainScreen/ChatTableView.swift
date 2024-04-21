@@ -24,15 +24,14 @@ final class ChatTableView: UITableView {
 			offSet += fetchMessagesCount
 		}
 	}
-	/// не забыдь
-	private var isLoading = false
+
+	var isLoading = false
 	
 	var messages: [MessageViewModel] = [] {
 		didSet {
 			self.reloadData()
 			
 			guard isLoading else {
-				print("JJDsjkdjsk")
 				return
 			}
 			scrollToRow(at: IndexPath(row: fetchMessagesCount - 1, section: 0), at: .top, animated: false)
@@ -40,14 +39,10 @@ final class ChatTableView: UITableView {
 		}
 	}
 
-	
 	override func didMoveToSuperview() {
 		super.didMoveToSuperview()
 		configureTableVIew()
-//		timer = Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(receiveMessage), userInfo: nil, repeats: false)
 	}
-	
-	
 	
 	private func configureTableVIew() {
 		register(ChatTableViewCell.self, forCellReuseIdentifier: .messagesCell)
@@ -56,42 +51,25 @@ final class ChatTableView: UITableView {
 		dataSource = self
 	}
 
-	
+	func removeSelectedMessage() {
+		// Код для удаления сообщений из данных и обновления таблицы
+	}
 }
 
 extension ChatTableView: UITableViewDataSource, UITableViewDelegate {
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//		mokMessages.count
 		return messages.count
 	}
 	
-	
-	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: .messagesCell, for: indexPath) as! ChatTableViewCell
-		
-//		let model = MessageViewModel(image: "", date: "23", id: "", message: mokMessages[indexPath.row].message, isIncoming: true)
-//		mokMessages.append(model)
-		
 		cell.configure(with: ChatTableViewCell.ModelCell.init(message: messages[indexPath.row]))
-//		self.scrollToRow(at: indexPath, at: .bottom, animated: true)
-	
 		return cell
-		
-	
 	}
 	
-//	func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//		guard isLoading == false, numberOfRowsToEndFrom(indexPath: indexPath) + savedMessagesCount < 5 else {
-//			return
-//		}
-//
-//		eventsDelegate?.requestForNextPage(offset: messages.count)
-//		isLoading = true
-//	}
-//
-	
-	
+	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		eventsDelegate?.showMessageDetail(with: messages[indexPath.row], at: indexPath.row)
+	}
 }
 
 extension ChatTableView {
@@ -99,54 +77,22 @@ extension ChatTableView {
 	func scrollToBottom(animated: Bool = true) {
 		let lastSection = numberOfSections - 1
 		let lastRow = numberOfRows(inSection: lastSection) - 1
+		
 		if lastSection >= 0 && lastRow >= 0 {
 			let indexPath = IndexPath(row: lastRow, section: lastSection)
-//			isLoading = true
 			scrollToRow(at: indexPath, at: .bottom, animated: animated)
 		}
-//		isLoading = false
 	}
-	
-	func removeSelectedMessage() {
-		// Код для удаления сообщений из данных и обновления таблицы
-	}
-	
-	//	func scrollToTop(animated: Bool = true) {
-	//		let indexPath = IndexPath(row: 0, section: 0)
-	//	}
-	
-	
 	
 	func scrollViewDidScroll(_ scrollView: UIScrollView) {
-		//			let maximumOffset = scrollView.contentSize.height - scrollView.frame.size.height
 		let tableView = scrollView as! ChatTableView
-
 		guard isLoading == false else { return }
-
-		//
-		
 		let position = tableView.contentOffset.y
 		
-		
-		
-
 		if position < 150 { // Проверка, что скроллим вверх и достигли верхней границы с некоторым запасом
-			print("загрузка новыых")
-		
-
-
-//						scrollView.isScrollEnabled = false
-
 			eventsDelegate?.requestNextPageMessages(offset: offSet)
 			isLoading = true
 		}
-		//		scrollView.isScrollEnabled = true
-
-	}
-	
-	func fetchData(messages: [MessageViewModel])  {
-		let newMessages = messages
-		self.messages.insert(contentsOf: newMessages, at: 0)
 	}
 }
 

@@ -9,10 +9,14 @@ import UIKit
 
 protocol ChatMainScreen: AnyObject, ActivityIndicatorSpinner {
 	func updateUI(with messages: [MessageViewModel]) async
-	func showErrorDidFinishedRequestError(with response: ResponseWithError)
+	func fetchMessagesDidFinishedError(with response: ErrorFetchMessages)
+	var isFirstLaunch: Bool { get set }
 }
 
 class ChatViewController: UIViewController {
+	// MARK - Property
+	
+	var isFirstLaunch: Bool = true
 	
 	// MARK - Presenter
 	
@@ -51,6 +55,12 @@ class ChatViewController: UIViewController {
 	
 }
 
+extension ChatViewController: DetailMessageScreenDelegate {
+	func deleteMessage(index: Int) {
+		chatTableView.messages.remove(at: index)
+	}
+}
+
 extension ChatViewController {
 	// Инициализация коллбека onSend из inputConteiner при нажатии кнопки отправить
 	private func setupSendButtonCallback() {
@@ -64,13 +74,12 @@ extension ChatViewController {
 	private func handleSentMessage(_ message: String) {
 		let newMessage = MessageViewModel.init(
 			image: "sd",
-			date: "s",
+			date: Date.formattedCurrentTimeWithDayTime(),
 			id: "s",
 			message: message,
-			isIncoming: true
+			isIncoming: false
 		)
 		chatTableView.messages.append(newMessage)
-		chatTableView.reloadData()
 		DispatchQueue.main.async {
 			self.chatTableView.scrollToBottom(animated: false)
 		}
@@ -78,43 +87,30 @@ extension ChatViewController {
 }
 
 extension ChatViewController: ChatMainScreen {
-	func showErrorDidFinishedRequestError(with response: ResponseWithError) {
-		showErrorView(offSet :response.offSet, errorMessage: response.errorMessage)
+	func fetchMessagesDidFinishedError(with response: ErrorFetchMessages) {
+		Router.shared.openErrorView(messageError: response.errorMessage, delegate: self, offSet: response.offSet)
 	}
 	
 	func updateUI(with messages: [MessageViewModel]) async {
-		DispatchQueue.main.async {
-			self.chatTableView.fetchMessagesCount = messages.count
-			self.chatTableView.fetchData(messages: messages)
+		chatTableView.fetchMessagesCount = messages.count
+		chatTableView.messages.insert(contentsOf: messages, at: 0)
+		if isFirstLaunch {
+			self.chatTableView.scrollToBottom(animated: false)
 		}
+		
 	}
 }
 
-extension ChatViewController {
-	private func showErrorView(offSet: Int, errorMessage: String) {
-		/// Настройка всплывающей вью при ошибке запроса на сервер, с предложением еще раз обновить данные
-		let errorView = ErrorView()
-		errorView.center = self.view.center
-		errorView.titleLabel.text = errorMessage
-		
-		errorView.onRetry = { [weak self] in // Обработчики действий для кнопок во всплывающей вью
-			Task {
-				await self?.presenter?.fetchMessages(offset: offSet)// Повторная загрузка данных через презентер
-			}
-			self?.hideErrorView(errorView: errorView) // Скрыть и деинициализировать всплывающую вью
-		}
-		
-		errorView.onCancel = { [weak self] in
-			self?.hideErrorView(errorView: errorView) // Скрыть и деинициализировать всплывающую вью
-		}
-		self.view.addSubview(errorView)
+extension ChatViewController: ErrorViewDelegate {
+	func onCancel() {
+		chatTableView.isLoading = false
 	}
 	
-	private func hideErrorView(errorView: ErrorView) {
-		// Удаление всплывающей вьюшки из иерархии вью и деинициализация
-		errorView.removeFromSuperview()
-		errorView.onRetry = nil
-		errorView.onCancel = nil
+	func onRetry(offSet: Int) {
+		Task {
+			await self.presenter?.fetchMessages(offset: offSet)// Повторная загрузка данных через презентер
+		}
+		// Скрыть и деинициализировать всплывающую вью
 	}
 }
 
@@ -126,7 +122,7 @@ extension ChatViewController: TableViewInteractionDelegate {
 	}
 	
 	func showMessageDetail(with message: MessageViewModel, at index: Int) {
-		
+		Router.shared.openMessageDetailScreen(with: message, at: index, delegate: self)
 	}
 }
 
@@ -140,10 +136,6 @@ extension ChatViewController {
 		chatTableView.eventsDelegate = self
 		Task {
 			await presenter?.fetchMessages(offset: 0)
-			DispatchQueue.main.async {
-				self.chatTableView.reloadData()
-				self.chatTableView.scrollToBottom(animated: false)
-			}
 		}
 	}
 }
@@ -159,6 +151,7 @@ extension ChatViewController {
 	
 	private func makeTableView() -> ChatTableView {
 		let tableView = ChatTableView()
+		tableView.eventsDelegate = self
 		return tableView
 	}
 	

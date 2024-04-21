@@ -7,6 +7,3 @@
 
 import Foundation
 
-struct CellIdentifiers {
-	static let messageCell = "MessageCell"
-}

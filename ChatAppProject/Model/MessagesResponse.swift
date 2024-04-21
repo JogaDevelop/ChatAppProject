@@ -1,5 +1,5 @@
 //
-//  MessageResponse.swift
+//  MessagesResponse.swift
 //  ChatAppProject
 //
 //  Created by Evgeny Kislitsin on 18.04.2024.
@@ -7,6 +7,6 @@
 
 import Foundation
 
-struct MessageResponse: Decodable {
+struct MessagesResponse: Decodable {
 	let result: [String]
 }

@@ -8,8 +8,9 @@
 import UIKit
 
 protocol NetworkService: AnyObject {
-	func fetchMessages(offset: Int) async -> Result<MessageResponse, RequestError>
-	func fetchAvatars(from url: URL) async -> UIImage?
+	func fetchMessages(offset: Int) async -> Result<MessagesResponse, RequestError>
+	func fetchAvatar(from urlString: String) async -> UIImage?
+	func downloadImage(from urlString: String) async -> UIImage?
 }
 
 extension NetworkService {
@@ -29,9 +30,9 @@ extension NetworkService {
 }
 
 extension NetworkService {
-	func decode(from data: Data) throws -> MessageResponse {
+	func decode(from data: Data) throws -> MessagesResponse {
 		do {
-			let decoded = try JSONDecoder().decode(MessageResponse.self, from: data)
+			let decoded = try JSONDecoder().decode(MessagesResponse.self, from: data)
 			return decoded
 		} catch {
 			throw RequestError.decodingError

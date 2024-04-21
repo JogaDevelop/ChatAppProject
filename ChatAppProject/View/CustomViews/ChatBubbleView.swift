@@ -18,8 +18,8 @@ final class ChatBubbleView: UIView {
 	
 	var incoming = false {
 		didSet {
-			backgroundColor = incoming ? .systemBlue : .systemGray4
-			messageLabel.textColor = incoming ?  .white : .black 
+			backgroundColor = incoming ? .systemGray4: .systemBlue
+			messageLabel.textColor = incoming ? .black: .white 
 		}
 	}
 	

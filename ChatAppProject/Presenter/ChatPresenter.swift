@@ -51,20 +51,25 @@ final class ChatPresenter: ChatPresentationLogic {
 			data.result.indices.forEach {
 				messagesArray.append(
 					MessageViewModel(
-						image: "https://cdn1.iconfinder.com/data/icons/diversity-avatars-volume-1-heads/64/matrix-neo-man-white-512.png",
-						date: "25.02",
-						id: "Id",
+						image: "https://cdn4.iconfinder.com/data/icons/avatars-xmas-giveaway/128/man_male_avatar_portrait-256.png",
+						date: Date.formattedCurrentTimeWithDayTime(),
+						id: String($0),
 						message: data.result[$0],
 						isIncoming: true)
 				)
 			}
+			let sortedMessage = messagesArray.sorted(by: { Int($0.id)! > Int($1.id)! })
 			
 			
-			await view?.updateUI(with: messagesArray)
+			
+			await view?.updateUI(with: sortedMessage)
+			DispatchQueue.main.async {
+				self.view?.isFirstLaunch = false
+			}
 			view?.hideSpinner()
 		case .failure(let error):
 			view?.hideSpinner()
-			view?.showErrorDidFinishedRequestError(with: ResponseWithError(offSet: offset, errorMessage: error.rawValue))
+			view?.fetchMessagesDidFinishedError(with: ErrorFetchMessages(offSet: offset, errorMessage: error.rawValue))
 			print(error.rawValue)
 		}
 	}

@@ -7,7 +7,7 @@
 
 import UIKit
 
-struct ResponseWithError {
+struct ErrorFetchMessages {
 	let offSet: Int
 	let errorMessage: String
 }

@@ -12,7 +12,9 @@ import UIKit
 
 class NetworkServiceManager: NetworkService {
 	
-	func fetchMessages(offset: Int) async -> Result<MessageResponse, RequestError> {
+	private let cache = NSCache<NSString, UIImage>()
+	
+	func fetchMessages(offset: Int) async -> Result<MessagesResponse, RequestError> {
 		guard let url = Endpoint.getMessages(offset: offset).url else { return .failure(.badUrl) }
 		
 		do {
@@ -34,7 +36,10 @@ class NetworkServiceManager: NetworkService {
 		}
 	}
 	
-	func fetchAvatars(from url: URL) async -> UIImage? {
+	func fetchAvatar(from urlString: String) async -> UIImage? {
+		guard let url = URL(string: urlString) else   {
+			return nil
+		}
 		do {
 			let (data, response) = try await URLSession.shared.data(from: url)
 			try handleResponse(response)
@@ -43,6 +48,16 @@ class NetworkServiceManager: NetworkService {
 			
 			return nil
 		}
+	}
+	
+	func downloadImage(from urlString: String) async -> UIImage? {
+		if let cachedImage = cache.object(forKey: NSString(string: urlString)) {
+			return cachedImage
+		} else if let fetchAvatar = await fetchAvatar(from: urlString) {
+			cache.setObject(fetchAvatar, forKey: NSString(string: urlString))
+			return fetchAvatar
+		}
+		return nil
 	}
 	
 	
