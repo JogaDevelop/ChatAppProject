@@ -82,12 +82,12 @@ extension ChatTableView {
 	/// метод отрабатывающий при скроле вверх и дергающий делегат загрузки новых данных
 	func scrollViewDidScroll(_ scrollView: UIScrollView) {
 		let tableView = scrollView as! ChatTableView                // проверяем что скрол отработал именно в нашем tableView
-		guard isLoading == false else { return }			        // ставим флаг в true чтобы не было бесконечной загрузки пока пользователь скролит вверх
+		guard isLoading == false else { return }			        // проверяем что флаг загрузки false иначе выходим, иначе будет бесконечная загрузка пока пользователь не отпустит скрол
 		let position = tableView.contentOffset.y				    // поцизия на которой находимся в таблицу
 		
-		if position < 150 { 									    // Проверка, что при скроле вверх достигли верхней границы с некоторым запасом
+		if position < 150 { 									    // проверка, что при скроле вверх достигли верхней границы с некоторым запасом
 			eventsDelegate?.requestNextPageMessages(offset: offSet) // загружаем новые данные по offset
-			isLoading = true										// флаг загрузки ставим в true, чтобы не сработала снова загрузка если пользователь не отпустил скрол вверх
+			isLoading = true										// флаг загрузки ставим в true, чтобы можно было снова при скролле вверх загружать данные
 		}
 	}
 }
