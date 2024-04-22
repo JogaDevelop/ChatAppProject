@@ -13,20 +13,20 @@ class NetworkServiceManager: NetworkService {
 		guard let url = Endpoint.getMessages(offset: offset).url else { return .failure(.badUrl) }
 		
 		do {
-			// Попытка получения данных по указанному URL
+			/// Попытка получения данных по указанному URL
 			let (data, response) = try await URLSession.shared.data(from: url)
 			guard let response = response as? HTTPURLResponse else {
 				return .failure(.invalidResponseError)
 			}
 			
-			// Проверка, что ответ это HTTPURLResponse с кодом 200
+			/// Проверка, что ответ это HTTPURLResponse с кодом 200
 			try handleResponse(response)
-			// Декодирование полученных данных
+			/// Декодирование полученных данных
 			let decodedResponse = try decode(from: data)
 			
 			return .success(decodedResponse)
 		} catch {
-			// Ошибка
+			/// Ошибка
 			return .failure(.connectionError)
 		}
 	}

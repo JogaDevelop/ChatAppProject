@@ -13,32 +13,30 @@ protocol TableViewInteractionDelegate: AnyObject {
 }
 
 final class ChatTableView: UITableView {
-	// масcив текста для проверки работы таблицы
+	
+	// MARK: - Property
 	
 	weak var eventsDelegate: TableViewInteractionDelegate?
 	
-	private var offSet = 0
+	/// Переменые для логики отображения данных
+	private var offSet = 0									 // offset по которому грузятся новые сообщения с сервера
+	var localMessageCount = 0								 // счетчик локальные сообщений
+	var fetchMessagesCount = 0								 // счетчик загруженных сообщений за один раз
+	var isLoading = false									 // флаг, идет загрузка
 	
-	var fetchMessagesCount = 0 {
+	var fetchMessages: [MessageViewModel] = [] { 			 // массив сообщений из которого обновляется таблица
 		didSet {
-			offSet += fetchMessagesCount
+			self.reloadData()								 // если массив изменяется обновляем таблицу
+			offSet = fetchMessages.count - localMessageCount // обновляем  offSet, количество загруженных сообщений минус локальные,
+															 // чтобы сохранить хронологию и нумерации при загрузке новых сообщений
+			guard isLoading else { return }					 // если флаг загрузки true идем дальше
+			scrollToRow(at: IndexPath(row: fetchMessagesCount - 1, section: 0), at: .top, animated: false) // скролим на место на котором остановислись при скроле вверх
+			isLoading = false								 // флаг загрузки ставим в false, чтобы можно было снова загружать новые сообщения при скроле вверх
 		}
 	}
 
-	var isLoading = false
+	// MARK: - Lifecycle
 	
-	var messages: [MessageViewModel] = [] {
-		didSet {
-			self.reloadData()
-			
-			guard isLoading else {
-				return
-			}
-			scrollToRow(at: IndexPath(row: fetchMessagesCount - 1, section: 0), at: .top, animated: false)
-			isLoading = false
-		}
-	}
-
 	override func didMoveToSuperview() {
 		super.didMoveToSuperview()
 		configureTableVIew()
@@ -50,31 +48,27 @@ final class ChatTableView: UITableView {
 		delegate = self
 		dataSource = self
 	}
-
-	func removeSelectedMessage() {
-		// Код для удаления сообщений из данных и обновления таблицы
-	}
 }
 
 extension ChatTableView: UITableViewDataSource, UITableViewDelegate {
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return messages.count
+		return fetchMessages.count
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: .messagesCell, for: indexPath) as! ChatTableViewCell
-		let message = messages[indexPath.row]
+		let message = fetchMessages[indexPath.row]
 		cell.configure(with: ChatTableViewCell.ModelCell.init(message: message))
 		return cell
 	}
 	
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		eventsDelegate?.showMessageDetail(with: messages[indexPath.row], at: indexPath.row)
+		eventsDelegate?.showMessageDetail(with: fetchMessages[indexPath.row], at: indexPath.row)
 	}
 }
 
 extension ChatTableView {
-	// Метод для прокрутки к последней ячейке
+	/// Метод для прокрутки к последней ячейке
 	func scrollToBottom(animated: Bool = true) {
 		let lastSection = numberOfSections - 1
 		let lastRow = numberOfRows(inSection: lastSection) - 1
@@ -85,19 +79,20 @@ extension ChatTableView {
 		}
 	}
 	
+	/// метод отрабатывающий при скроле вверх и дергающий делегат загрузки новых данных
 	func scrollViewDidScroll(_ scrollView: UIScrollView) {
-		let tableView = scrollView as! ChatTableView
-		guard isLoading == false else { return }
-		let position = tableView.contentOffset.y
+		let tableView = scrollView as! ChatTableView                // проверяем что скрол отработал именно в нашем tableView
+		guard isLoading == false else { return }			        // ставим флаг в true чтобы не было бесконечной загрузки пока пользователь скролит вверх
+		let position = tableView.contentOffset.y				    // поцизия на которой находимся в таблицу
 		
-		if position < 150 { // Проверка, что скроллим вверх и достигли верхней границы с некоторым запасом
-			eventsDelegate?.requestNextPageMessages(offset: offSet)
-			isLoading = true
+		if position < 150 { 									    // Проверка, что при скроле вверх достигли верхней границы с некоторым запасом
+			eventsDelegate?.requestNextPageMessages(offset: offSet) // загружаем новые данные по offset
+			isLoading = true										// флаг загрузки ставим в true, чтобы не сработала снова загрузка если пользователь не отпустил скрол вверх
 		}
 	}
 }
 
-private extension String {
+private extension String {											
 	static let messagesCell = "MessagesCell"
 }
 

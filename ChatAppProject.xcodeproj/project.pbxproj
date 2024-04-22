@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		3600AECB2BCB84EC0076E2FB /* InputContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3600AECA2BCB84EB0076E2FB /* InputContainerView.swift */; };
-		3600AECD2BCCAE2F0076E2FB /* ChatTableView + ChatFeatures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3600AECC2BCCAE2F0076E2FB /* ChatTableView + ChatFeatures.swift */; };
 		3600AECF2BCFBB9B0076E2FB /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3600AECE2BCFBB9B0076E2FB /* Constants.swift */; };
 		36DDF4002BD0E51800E63029 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36DDF3FF2BD0E51800E63029 /* NetworkService.swift */; };
 		36DDF4022BD0E6D200E63029 /* MessagesResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36DDF4012BD0E6D200E63029 /* MessagesResponse.swift */; };
@@ -29,17 +28,17 @@
 		36E7086E2BC82F68007BA716 /* ChatBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E7086D2BC82F68007BA716 /* ChatBubbleView.swift */; };
 		36E708702BC87DB8007BA716 /* MessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E7086F2BC87DB8007BA716 /* MessageViewModel.swift */; };
 		36E7E7AB2BC9FE9B0043BC71 /* ChatErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E7E7AA2BC9FE9B0043BC71 /* ChatErrorView.swift */; };
-		36E7E7AD2BCA25790043BC71 /* ChatViewController + Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E7E7AC2BCA25790043BC71 /* ChatViewController + Keyboard.swift */; };
 		36FF67362BD4EFB700829EC8 /* Date + Formated .swift in Sources */ = {isa = PBXBuildFile; fileRef = 36FF67352BD4EFB700829EC8 /* Date + Formated .swift */; };
 		36FF67392BD506A300829EC8 /* ChatRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36FF67382BD506A200829EC8 /* ChatRouter.swift */; };
 		36FF673B2BD5390A00829EC8 /* ErrorRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36FF673A2BD5390A00829EC8 /* ErrorRequest.swift */; };
 		36FF673E2BD55F5E00829EC8 /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36FF673D2BD55F5E00829EC8 /* ImageCacheManager.swift */; };
 		36FF67402BD56F2600829EC8 /* ImageURLs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36FF673F2BD56F2600829EC8 /* ImageURLs.swift */; };
+		36FF67422BD58B6500829EC8 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36FF67412BD58B6500829EC8 /* CoreDataManager.swift */; };
+		36FF67442BD5BF7300829EC8 /* MockChatService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36FF67432BD5BF7300829EC8 /* MockChatService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		3600AECA2BCB84EB0076E2FB /* InputContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputContainerView.swift; sourceTree = "<group>"; };
-		3600AECC2BCCAE2F0076E2FB /* ChatTableView + ChatFeatures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatTableView + ChatFeatures.swift"; sourceTree = "<group>"; };
 		3600AECE2BCFBB9B0076E2FB /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		36DDF3FF2BD0E51800E63029 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		36DDF4012BD0E6D200E63029 /* MessagesResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesResponse.swift; sourceTree = "<group>"; };
@@ -62,12 +61,13 @@
 		36E7086D2BC82F68007BA716 /* ChatBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatBubbleView.swift; sourceTree = "<group>"; };
 		36E7086F2BC87DB8007BA716 /* MessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewModel.swift; sourceTree = "<group>"; };
 		36E7E7AA2BC9FE9B0043BC71 /* ChatErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatErrorView.swift; sourceTree = "<group>"; };
-		36E7E7AC2BCA25790043BC71 /* ChatViewController + Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController + Keyboard.swift"; sourceTree = "<group>"; };
 		36FF67352BD4EFB700829EC8 /* Date + Formated .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date + Formated .swift"; sourceTree = "<group>"; };
 		36FF67382BD506A200829EC8 /* ChatRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRouter.swift; sourceTree = "<group>"; };
 		36FF673A2BD5390A00829EC8 /* ErrorRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorRequest.swift; sourceTree = "<group>"; };
 		36FF673D2BD55F5E00829EC8 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
 		36FF673F2BD56F2600829EC8 /* ImageURLs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageURLs.swift; sourceTree = "<group>"; };
+		36FF67412BD58B6500829EC8 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
+		36FF67432BD5BF7300829EC8 /* MockChatService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockChatService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -196,6 +196,7 @@
 				36DDF4052BD35FCA00E63029 /* EndPoint.swift */,
 				36DDF4072BD3602F00E63029 /* NetworkProtocol.swift */,
 				36FF673A2BD5390A00829EC8 /* ErrorRequest.swift */,
+				36FF67452BD5C02100829EC8 /* MockChatService */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -203,8 +204,6 @@
 		36E708612BC6C31C007BA716 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				36E7E7AC2BCA25790043BC71 /* ChatViewController + Keyboard.swift */,
-				3600AECC2BCCAE2F0076E2FB /* ChatTableView + ChatFeatures.swift */,
 				36FF67352BD4EFB700829EC8 /* Date + Formated .swift */,
 			);
 			path = Extensions;
@@ -224,6 +223,7 @@
 			isa = PBXGroup;
 			children = (
 				36E7083E2BC6AAD0007BA716 /* Messages.xcdatamodeld */,
+				36FF67412BD58B6500829EC8 /* CoreDataManager.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -275,6 +275,14 @@
 				36FF673D2BD55F5E00829EC8 /* ImageCacheManager.swift */,
 			);
 			path = CacheManager;
+			sourceTree = "<group>";
+		};
+		36FF67452BD5C02100829EC8 /* MockChatService */ = {
+			isa = PBXGroup;
+			children = (
+				36FF67432BD5BF7300829EC8 /* MockChatService.swift */,
+			);
+			path = MockChatService;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -350,17 +358,17 @@
 				36E708362BC6AAD0007BA716 /* AppDelegate.swift in Sources */,
 				3600AECF2BCFBB9B0076E2FB /* Constants.swift in Sources */,
 				36E708382BC6AAD0007BA716 /* SceneDelegate.swift in Sources */,
-				3600AECD2BCCAE2F0076E2FB /* ChatTableView + ChatFeatures.swift in Sources */,
 				36DDF4002BD0E51800E63029 /* NetworkService.swift in Sources */,
 				36E708522BC6B597007BA716 /* ChatTableView.swift in Sources */,
+				36FF67422BD58B6500829EC8 /* CoreDataManager.swift in Sources */,
 				36DDF4042BD0EBD000E63029 /* ErrorFetchMessages.swift in Sources */,
-				36E7E7AD2BCA25790043BC71 /* ChatViewController + Keyboard.swift in Sources */,
 				36DDF4082BD3602F00E63029 /* NetworkProtocol.swift in Sources */,
 				3600AECB2BCB84EC0076E2FB /* InputContainerView.swift in Sources */,
 				36E708542BC6B5B2007BA716 /* ChatTableViewCell.swift in Sources */,
 				36FF67392BD506A300829EC8 /* ChatRouter.swift in Sources */,
 				36FF673E2BD55F5E00829EC8 /* ImageCacheManager.swift in Sources */,
 				36FF67362BD4EFB700829EC8 /* Date + Formated .swift in Sources */,
+				36FF67442BD5BF7300829EC8 /* MockChatService.swift in Sources */,
 				36E7E7AB2BC9FE9B0043BC71 /* ChatErrorView.swift in Sources */,
 				36E7085B2BC6BC84007BA716 /* DetailMessageViewController.swift in Sources */,
 				36DDF4062BD35FCA00E63029 /* EndPoint.swift in Sources */,

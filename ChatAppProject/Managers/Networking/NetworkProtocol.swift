@@ -13,7 +13,7 @@ protocol NetworkService: AnyObject {
 }
 
 extension NetworkService {
-	// Проверка, что ответ это HTTPURLResponse с кодом 200
+	/// Проверка, что ответ это HTTPURLResponse с кодом 200
 	func handleResponse(_ response: URLResponse) throws {
 		
 		guard let response = response as? HTTPURLResponse else {

@@ -7,14 +7,17 @@
 
 import UIKit
 
-
 final class ChatBubbleView: UIView {
+	
+	// MARK: - Views
 	
 	lazy var messageLabel: UILabel = {
 		let label = UILabel()
 		label.numberOfLines = 0
 		return label
 	}()
+	
+	// MARK: - Property
 	
 	var incoming = false {
 		didSet {
@@ -23,14 +26,20 @@ final class ChatBubbleView: UIView {
 		}
 	}
 	
-	
+	// MARK: - Lifecycle
 		
 	override func didMoveToSuperview() {
 		super.didMoveToSuperview()
 		setupConstraint()
 		setupConfigure()
 	}
-		
+
+	override func layoutSubviews() {
+		super.layoutSubviews()
+	}
+	
+	// MARK: Setup configure
+	
 	private func setupConfigure() {
 		layer.cornerRadius = 20
 		clipsToBounds = true
@@ -45,14 +54,6 @@ final class ChatBubbleView: UIView {
 		messageLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -15).isActive = true
 		messageLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 100).isActive = true
 	}
-	
-	
-	
-	override func layoutSubviews() {
-		super.layoutSubviews()
-	}
-	
-	
 }
 
 

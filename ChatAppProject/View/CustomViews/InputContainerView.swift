@@ -10,7 +10,10 @@ import UIKit
 
 
 class InputContainerView: UIView, UITextViewDelegate {
-	// Создание элементов интерфейса: текстовое поле и кнопка отправки
+	
+	// MARK: - Views
+	
+	/// Создание элементов интерфейса: текстовое поле и кнопка отправки
 	var messageTextView = UITextView()
 	var sendMessageButton = UIButton(type: .system)
 	
@@ -21,12 +24,14 @@ class InputContainerView: UIView, UITextViewDelegate {
 		return label
 	}()
 	
+	// MARK: - Property
 	
-	// Коллбек, вызываемый при отправке сообщения
-	var onSend: ((String) -> Void)?
 	
-	// Инициализаторы для создания view программно или из Interface Builder
-	override init(frame: CGRect) {
+	var onSend: ((String) -> Void)?		// коллбек, вызываемый при отправке сообщения
+	
+	// MARK: - Lifecycle
+	
+	override init(frame: CGRect) {		// инициализаторы для создания view программно или из Interface Builder
 		super.init(frame: frame)
 		setupViews()
 	}
@@ -36,9 +41,11 @@ class InputContainerView: UIView, UITextViewDelegate {
 		setupViews()
 	}
 	
-	// Метод для настройки внешнего вида и расположения элементов внутри view
+	// MARK: - Setup configure
+	
+	/// Метод для настройки внешнего вида и расположения элементов внутри view
 	private func setupViews() {
-		// Настройка текстового поля
+		/// Настройка текстового поля
 		messageTextView.delegate = self
 		messageTextView.isScrollEnabled = false
 		messageTextView.layer.cornerRadius = 5
@@ -48,7 +55,7 @@ class InputContainerView: UIView, UITextViewDelegate {
 		messageTextView.translatesAutoresizingMaskIntoConstraints = false
 		addSubview(messageTextView)
 		
-		// Настройка кнопки отправки
+		/// Настройка кнопки отправки
 		let configuration = UIImage.SymbolConfiguration(pointSize: 24)
 		sendMessageButton.setImage(UIImage(systemName: "arrow.up.circle.fill", withConfiguration: configuration), for: .normal)
 		sendMessageButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
@@ -59,7 +66,7 @@ class InputContainerView: UIView, UITextViewDelegate {
 		placeholder.translatesAutoresizingMaskIntoConstraints = false
 		
 		
-		// Автоматическая настройка констрейнтов для элементов внутри контейнера
+		/// Автоматическая настройка констрейнтов для элементов внутри контейнера
 		NSLayoutConstraint.activate([
 			messageTextView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
 			messageTextView.topAnchor.constraint(equalTo: topAnchor, constant: 5),
@@ -84,13 +91,13 @@ class InputContainerView: UIView, UITextViewDelegate {
 		}
 	}
 	
-	// Метод, вызываемый при нажатии на кнопку отправки
+	/// Метод, вызываемый при нажатии на кнопку отправки
 	@objc func sendMessage() {
 		if let text = messageTextView.text, !text.isEmpty {
-			onSend?(text)  // Вызов коллбека с отправленным текстом
-			messageTextView.text = "" // Очистка текстового поля после отправки
-			placeholder.isHidden = false
-			messageTextView.resignFirstResponder()
+			onSend?(text)  							// вызов коллбека с отправленным текстом
+			messageTextView.text = "" 				// очистка текстового поля после отправки
+			placeholder.isHidden = false    		// скрываем placeholder
+			messageTextView.resignFirstResponder()  // скрываем клавиатуру
 		}
 	}
 	

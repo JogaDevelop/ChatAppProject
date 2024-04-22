@@ -14,8 +14,12 @@ protocol ErrorViewDelegate: AnyObject {
 
 class ErrorView: UIView {
 	
+	// MARK - Property
+	
 	var offSet: Int = 0
 	weak var delegate: ErrorViewDelegate?
+	
+	// MARK = Views
 	
 	let titleLabel: UILabel = {
 		let label = UILabel()
@@ -53,6 +57,8 @@ class ErrorView: UIView {
 		return button
 	}()
 	
+	// MARK - Lifecycle
+	
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		setupViews()
@@ -65,6 +71,8 @@ class ErrorView: UIView {
 	deinit {
 		print("deinit errorView")
 	}
+	
+	// MARK - Setup configure
 	
 	private func setupViews() {
 		backgroundColor = .white
@@ -102,6 +110,8 @@ class ErrorView: UIView {
 			cancelButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
 		])
 	}
+	
+	// MARK: - Actions
 	
 	@objc private func didTapRetry() {
 		delegate?.onRetry(offSet: offSet)

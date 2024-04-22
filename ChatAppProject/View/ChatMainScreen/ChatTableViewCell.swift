@@ -14,14 +14,19 @@ protocol CellConfigurable {
 
 final class ChatTableViewCell: UITableViewCell  {
 	
+	// MARK: - Views
+	
 	private lazy var avatarImageView: UIImageView = makeImageView()
 	private lazy var messageView: ChatBubbleView = makeMessageView()
 	private lazy var dateLabel: UILabel = makeDateLabel()
 
+	// MARK: - Lifecycle
+	
 	override func didMoveToSuperview() {
 		super.didMoveToSuperview()
 	}
 	
+	/// Костреинты которые будем менять в зависимости, сообщение с сервера или наше
 	var messageViewLeadingOrTrailingConstraint = NSLayoutConstraint()
 	var avatarImageViewLeadingOrTrailingConstraint = NSLayoutConstraint()
 		
@@ -31,6 +36,7 @@ final class ChatTableViewCell: UITableViewCell  {
 		
 	}
 	
+	/// Настройка отображения ячеек + в зависимости от флага incoming, логика как будет отображаться ячейка
 	private func setupConfigureCell(model: MessageViewModel) {
 		messageView.incoming = model.isIncoming
 		messageView.messageLabel.text = model.message
@@ -41,8 +47,9 @@ final class ChatTableViewCell: UITableViewCell  {
 
 		messageViewLeadingOrTrailingConstraint.isActive = false
 		avatarImageViewLeadingOrTrailingConstraint.isActive = false
-
-		switch model.isIncoming {
+		
+		/// Меняем позицию ячейки вправло или влево, + плюс меняем аватар в зависмости чье сообщение
+		switch model.isIncoming { 
 		case true:
 			avatarImageViewLeadingOrTrailingConstraint = avatarImageView.leadingAnchor.constraint(
 				equalTo: contentView.leadingAnchor,
@@ -102,7 +109,7 @@ extension ChatTableViewCell: CellConfigurable {
 	}
 }
 
-
+/// Настройка Views
 extension ChatTableViewCell {
 	private func makeImageView() -> UIImageView {
 		let imageView = UIImageView()

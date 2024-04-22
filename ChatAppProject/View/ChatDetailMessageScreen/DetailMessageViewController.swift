@@ -13,6 +13,8 @@ protocol DetailMessageScreenDelegate: AnyObject {
 
 class ChatDetailMessageViewController: UIViewController {
 	
+	// MARK - Property
+
 	var message: MessageViewModel
 	var index: Int
 	
@@ -29,13 +31,15 @@ class ChatDetailMessageViewController: UIViewController {
 		fatalError("init(coder:) has not been implemented")
 	}
 	
+	// MARK: - VIews
+	
 	private lazy var avatarImageView: UIImageView = makeAvatarImageView()
 	private lazy var messageStackView: UIStackView = makeStackView()
 	private lazy var messageLabel: UILabel = makeMessageLabel()
 	private lazy var dateLabel: UILabel = makeDateLabel()
 	private lazy var deleteButton: UIButton = makeDeleteButton()
 	
-	//MARK: - Lifecycle
+	// MARK: - Lifecycle
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -70,6 +74,7 @@ extension ChatDetailMessageViewController {
 		view.backgroundColor = .systemBackground
 	}
 	
+	/// Загрузка констреинтов
 	private func setupConstraints() {
 		view.addSubview(avatarImageView)
 		avatarImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -91,6 +96,7 @@ extension ChatDetailMessageViewController {
 		deleteButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16).isActive = true
 	}
 	
+	/// Обновляем контент который передали из ячейки при ее нажатии
 	private func setupContent() {
 		messageLabel.text = message.message
 		dateLabel.text = message.date
@@ -98,7 +104,7 @@ extension ChatDetailMessageViewController {
 	}
 }
 
-
+/// Инициализация Views
 extension ChatDetailMessageViewController {
 	func makeAvatarImageView() -> UIImageView {
 		let imageView = UIImageView()

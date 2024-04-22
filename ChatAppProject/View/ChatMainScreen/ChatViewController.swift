@@ -8,21 +8,22 @@
 import UIKit
 
 protocol ChatMainScreen: AnyObject, ActivityIndicatorSpinner {
-	func updateUI(with messages: [MessageViewModel]) async
+	func updateUI(with messages: [MessageViewModel], localMessageCount: Int) async
 	func fetchMessagesDidFinishedError(with response: ErrorFetchMessages)
 	var isFirstLaunch: Bool { get set }
 }
 
 class ChatViewController: UIViewController {
-	// MARK - Property
+	
+	// MARK: - Property
 	
 	var isFirstLaunch: Bool = true
 	
-	// MARK - Presenter
+	// MARK: - Presenter
 	
 	var presenter: ChatPresentationLogic?
 	
-	// MARK - Views
+	// MARK: - Views
 
 	private lazy var headerLabel: UILabel = makeTitleScreen()
 	private lazy var chatTableView: ChatTableView = makeTableView()
@@ -55,14 +56,19 @@ class ChatViewController: UIViewController {
 	
 }
 
+/// Метод делегата, удаления сообщения и из детального экрана
 extension ChatViewController: DetailMessageScreenDelegate {
 	func deleteMessage(index: Int) {
-		chatTableView.messages.remove(at: index)
+		if chatTableView.fetchMessages[index].isIncoming == false {
+			CoreDataManager.shared.deleteEntity(message: chatTableView.fetchMessages[index])
+		}
+		chatTableView.localMessageCount -= 1
+		chatTableView.fetchMessages.remove(at: index)
 	}
 }
 
 extension ChatViewController {
-	// Инициализация коллбека onSend из inputConteiner при нажатии кнопки отправить
+	/// Инициализация коллбека onSend из inputConteiner при нажатии кнопки отправить
 	private func setupSendButtonCallback() {
 		inputContainerView.onSend = { [weak self] message in
 			print("Отправленное сообщение: \(message)")
@@ -70,98 +76,104 @@ extension ChatViewController {
 		}
 	}
 	
-	// Метод для обработки отправленного сообщения
+	/// Метод для обработки отправленного сообщения
 	private func handleSentMessage(_ message: String) {
-		let newMessage = MessageViewModel.init(
-			image: "sd",
+		let newMessage = MessageViewModel.init(                  // создаем сообщение нашей модели данных
+			image: ImageURLs.myPhoto.urlString,
 			date: Date.formattedCurrentTimeWithDayTime(),
-			id: "s",
+			id: String(0),
 			message: message,
 			isIncoming: false
 		)
-		chatTableView.messages.append(newMessage)
-		DispatchQueue.main.async {
+		presenter?.saveMessageInDataManager(message: newMessage) // вызываем в презентере метод сохранения в coreData
+		chatTableView.localMessageCount += 1					 // добавляем +1 счетчику локальых переменных в tableView
+		chatTableView.fetchMessages.append(newMessage)			 // добавляем сообщение в массив в tableView из которого обновляем данные
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {	 // после добавления в массив скролим вниз чтобы пользователь видил свое сообщение
 			self.chatTableView.scrollToBottom(animated: false)
 		}
 	}
 }
 
+/// Методы делагата для для обновления ui в случае удачной и не удачной загрузки с сервера
 extension ChatViewController: ChatMainScreen {
-	func fetchMessagesDidFinishedError(with response: ErrorFetchMessages) {
+	func fetchMessagesDidFinishedError(with response: ErrorFetchMessages) {           // вызов errorView с предложением загрузить снова
 		Router.shared.openErrorView(messageError: response.errorMessage, delegate: self, offSet: response.offSet)
 	}
 	
-	func updateUI(with messages: [MessageViewModel]) async {
-		chatTableView.fetchMessagesCount = messages.count
-		chatTableView.messages.insert(contentsOf: messages, at: 0)
-		if isFirstLaunch {
+	func updateUI(with messages: [MessageViewModel], localMessageCount: Int) async {  // метод обновление нашего ui который будет вызываться из презентера
+		chatTableView.localMessageCount += localMessageCount						  // добавляем счетчику локальных сообщений +1 в tableView
+		chatTableView.fetchMessagesCount = messages.count							  // добавляем счетчику скачаных сообщений +1 в tableView
+		chatTableView.fetchMessages.insert(contentsOf: messages, at: 0)				  // длбавляем сообщения в массив в самое начало в tableView
+		if isFirstLaunch {															  // если пользователь зашел впервые, после загрузки локальных и загруженных данных скролим вниз
 			self.chatTableView.scrollToBottom(animated: false)
 		}
 		
 	}
 }
 
+/// Методы делеагата обработки нажатия кнопки из errorVIew
 extension ChatViewController: ErrorViewDelegate {
-	func onCancel() {
+	func onCancel() { 																  // если пользователь нажал cancel в errorView нечего не делаем, errorView деинициализируется
 		chatTableView.isLoading = false
 	}
 	
-	func onRetry(offSet: Int) {
+	func onRetry(offSet: Int) {														  // если пользователь нажал повторить вызываем загрузку по новой, errorView деинициализируется
 		Task {
-			await self.presenter?.fetchMessages(offset: offSet)// Повторная загрузка данных через презентер
+			await self.presenter?.fetchMessages(offset: offSet)
 		}
-		// Скрыть и деинициализировать всплывающую вью
 	}
 }
 
+/// Методы делегата таблицы при скроле вверх и нажатия на ячейку с сообщением
 extension ChatViewController: TableViewInteractionDelegate {
-	func requestNextPageMessages(offset: Int) {
+	func requestNextPageMessages(offset: Int) {										  // загружаем следующие данные по offset отработает при скроле вверх
 		Task {
 			await presenter?.fetchMessages(offset: offset)
 		}
 	}
 	
-	func showMessageDetail(with message: MessageViewModel, at index: Int) {
+	func showMessageDetail(with message: MessageViewModel, at index: Int) {		      // показываем детальный экран при нажати ячейки и передаем туда индекс и само сообщение
 		Router.shared.openMessageDetailScreen(with: message, at: index, delegate: self)
 	}
 }
 
+/// Загрузка методов инициализации при первом входе в приложение
 extension ChatViewController {
-	private func setupInterface() {
+	private func setupInterface() {  												  // скрываем нативный navigationBar
 		navigationController?.navigationBar.isHidden = true
 		view.backgroundColor = .systemBackground
 	}
 	
-	private func loadInitialData() {
+	private func loadInitialData() {												  // метод при первом входе в приложение
 		Task {
-			await presenter?.fetchAvatars()
-			await presenter?.fetchMessages(offset: 0)
+			await presenter?.fetchAvatars()											  // загружаем аватарки и сохраняем их в cacheManager
+			await presenter?.fetchMessages(offset: 0)								  // загружаем данные с сервера и локальные данные, при первом входе загружаем эти данные
 		}
 	}
 }
 
 /// Методы для инициализации и настройки UI, lazy свойств наших Views.
 extension ChatViewController {
-	private func makeTitleScreen() -> UILabel {
+	private func makeTitleScreen() -> UILabel {										  // инициализация заголовка экрана
 		let label = UILabel()
 		label.text = "Тестовое задание"
 		label.font = .systemFont(ofSize: 30, weight: .black)
 		return label
 	}
 	
-	private func makeTableView() -> ChatTableView {
+	private func makeTableView() -> ChatTableView {									  // инициализация tableView
 		let tableView = ChatTableView()
 		tableView.eventsDelegate = self
 		return tableView
 	}
 	
-	private func makeInputContainer() -> InputContainerView {
+	private func makeInputContainer() -> InputContainerView {						  // инициализация контейнера с полем ввода и кнопкой отправить сообщение
 		let view = InputContainerView()
 		view.backgroundColor = .secondarySystemBackground
 		return view
 	}
 	
-	private func setupConstraints() {
+	private func setupConstraints() {												  // загрузка констрейнтов
 		view.addSubview(headerLabel)
 		view.addSubview(chatTableView)
 		view.addSubview(inputContainerView)
@@ -185,6 +197,7 @@ extension ChatViewController {
 	}
 }
 
+/// Наблюдатели при всплытии и закртии клавиатуры
 extension ChatViewController {
 	private func removeNotificationsForKeyboardAppearance() {
 		NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
