@@ -77,7 +77,7 @@ final class ChatPresenter: ChatPresentationLogic {
 		case .failure(let error):
 			let flag = view?.isFirstLaunch ?? false					    // вытаскиваем значение, первый ли это вход в приложение
 			if !messages.isEmpty || flag {  							// если первый вход и данные не загружены, грузим мок данные вместе с локальными данными если они есть,
-				await mockLaunchingMessages(messages: messages, localCount: localMessageCount) // сработает если до этого были локальные сообщения или это первый вход в приложение, грузим мок сообщения
+				await mockLaunchingMessages(messages: messages, localCount: localMessageCount) // сработает если до этого были локальные сообщения и это первый вход в приложение, грузим мок сообщения вместе с локальными если они есть
 			}
 			view?.hideSpinner()											// скрываем спинер
 			if messages.isEmpty {									    // данные не пришли и это не первый вход в приложение, вызываем errorView с предложением загрузить сноав
@@ -86,6 +86,7 @@ final class ChatPresenter: ChatPresentationLogic {
 			print(error.rawValue)
 		}
 	}
+	
 	
 	/// Метод для получения мок данных, при первом входе в приложение будет вызван в обработке неудачного запроса, в него будут переданы локальные сообщения если такие есть и счетчик локальных сообщений
 	func mockLaunchingMessages(messages: [MessageViewModel], localCount: Int) async {
