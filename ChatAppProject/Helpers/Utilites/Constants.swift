@@ -25,7 +25,7 @@ enum Sizes {
 	
 	enum M {
 		static let width100: CGFloat = 100
-		static let height60: CGFloat = 60
+		static let height60: CGFloat = 65
 	}
 	
 	enum S {
